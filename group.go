@@ -50,44 +50,56 @@ func (g *group) Use(handlers ...Handler) Group {
 	return g
 }
 
+func (g *group) groupHandlers(handlers ...Handler) []Handler {
+	lenGroupMiddlewares := len(g.middlewares)
+	lenRouteHandlers := len(handlers)
+
+	_handlers := make([]Handler, lenGroupMiddlewares+lenRouteHandlers)
+
+	copy(_handlers, g.middlewares)
+	copy(_handlers[lenGroupMiddlewares:], handlers)
+
+	return _handlers
+}
+
 // Get method = "GET"
 func (g *group) Get(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodGet, g.prefix+path, handlers...)
+	g.app.Get(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Post method = "POST"
 func (g *group) Post(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodPost, g.prefix+path, handlers...)
+	g.app.Post(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Put method = "PUT"
 func (g *group) Put(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodPut, g.prefix+path, handlers...)
+	g.app.Put(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Delete method = "DELETE"
 func (g *group) Delete(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodDelete, g.prefix+path, handlers...)
+	g.app.Delete(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Head method = "HEAD"
 func (g *group) Head(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodHead, g.prefix+path, handlers...)
+	g.app.Head(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Patch method = "PATCH"
 func (g *group) Patch(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodPatch, g.prefix+path, handlers...)
+	g.app.Patch(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }
 
 // Options method = "OPTIONS"
 func (g *group) Options(path string, handlers ...Handler) Group {
-	g.app.Router().Register(MethodOptions, g.prefix+path, handlers...)
+	g.app.Options(g.prefix+path, g.groupHandlers(handlers...)...)
 	return g
 }

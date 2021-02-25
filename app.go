@@ -6,6 +6,7 @@ import (
 	"net/url"
 	_path "path"
 	"path/filepath"
+	"sync"
 
 	"github.com/zerogo-hub/zero-helper/logger"
 )
@@ -18,6 +19,12 @@ type App interface {
 
 	// Server http 服务器
 	Server() Server
+
+	// Context 从 pool 中获取一个 Context
+	Context() Context
+
+	// ReleaseContext 将 Context 释放到 pool 中
+	ReleaseContext(ctx Context)
 
 	// Version 获取框架版本号
 	Version() string
@@ -107,6 +114,9 @@ type app struct {
 	// server http 服务器
 	server Server
 
+	// context 对象池
+	ctxPool *sync.Pool
+
 	// config 应用配置
 	config *config
 
@@ -116,10 +126,16 @@ type app struct {
 
 // NewApp 生成一个应用实例
 func NewApp(opts ...Option) App {
-	a := &app{config: defaultConfig()}
+	a := &app{
+		ctxPool: &sync.Pool{},
+		config:  defaultConfig(),
+	}
 
 	a.router = NewRouter(a)
 	a.server = NewServer(a)
+	a.ctxPool.New = func() interface{} {
+		return NewContext(a)
+	}
 
 	for _, opt := range opts {
 		opt(a.config)
@@ -136,6 +152,16 @@ func (a *app) Router() Router {
 // Server http 服务器
 func (a *app) Server() Server {
 	return a.server
+}
+
+// Context 从 pool 中获取一个 Context
+func (a *app) Context() Context {
+	return a.ctxPool.Get().(Context)
+}
+
+// ReleaseContext 将 Context 释放到 pool 中
+func (a *app) ReleaseContext(ctx Context) {
+	a.ctxPool.Put(ctx)
 }
 
 // Version 获取框架版本号

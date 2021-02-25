@@ -12,6 +12,39 @@ import (
 	"github.com/zerogo-hub/zero-helper/time"
 )
 
+// CookieOption cookie 选项
+type CookieOption func(cookie *http.Cookie)
+
+// Cookie cookie 相关
+type Cookie interface {
+
+	// Cookie 获取 cookie 值
+	Cookie(key string, opts ...CookieOption) (string, error)
+
+	// SetCookie 设置 cookie，见 https://tools.ietf.org/html/rfc6265
+	// key: cookie 参数名称
+	// value: cookie 值
+	// maxAge: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.2
+	// 		 = 0: 表示不指定
+	// 		 < 0: 表示立即删除
+	// 		 > 0: cookie 生存时间，单位秒
+	// domain: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.3
+	// path: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.4
+	// secure: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.5
+	// httpOnly: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.6
+	SetCookie(key, value string, opts ...CookieOption)
+
+	// RemoveCookie 移除指定的 cookie
+	RemoveCookie(key string, opts ...CookieOption)
+
+	// SetHTTPCookie 设置原始的 cookie
+	SetHTTPCookie(cookie *http.Cookie)
+
+	// HTTPCookies 获取所有原始的 cookie
+	HTTPCookies() []*http.Cookie
+}
+
+// Cookie 获取 cookie 值
 func (ctx *context) Cookie(name string, opts ...CookieOption) (string, error) {
 	oname := name
 
@@ -45,6 +78,17 @@ func (ctx *context) Cookie(name string, opts ...CookieOption) (string, error) {
 	return val, err
 }
 
+// SetCookie 设置 cookie，见 https://tools.ietf.org/html/rfc6265
+// key: cookie 参数名称
+// value: cookie 值
+// maxAge: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.2
+// 		 = 0: 表示不指定
+// 		 < 0: 表示立即删除
+// 		 > 0: cookie 生存时间，单位秒
+// domain: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.3
+// path: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.4
+// secure: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.5
+// httpOnly: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.6
 func (ctx *context) SetCookie(name, value string, opts ...CookieOption) {
 	cookie := &http.Cookie{Name: name, Value: url.QueryEscape(value)}
 
@@ -66,10 +110,12 @@ func (ctx *context) SetCookie(name, value string, opts ...CookieOption) {
 	http.SetCookie(ctx.res, cookie)
 }
 
+// RemoveCookie 移除指定的 cookie
 func (ctx *context) RemoveCookie(name string, opts ...CookieOption) {
-	ctx.SetCookie(name, "", CookieMaxAge(-1))
+	ctx.SetCookie(name, "", WithCookieMaxAge(-1))
 }
 
+// SetHTTPCookie 设置原始的 cookie
 func (ctx *context) SetHTTPCookie(cookie *http.Cookie) {
 	if cookie == nil {
 		panic("Cookie cannot be empty")
@@ -78,23 +124,24 @@ func (ctx *context) SetHTTPCookie(cookie *http.Cookie) {
 	http.SetCookie(ctx.res, cookie)
 }
 
+// HTTPCookies 获取所有原始的 cookie
 func (ctx *context) HTTPCookies() []*http.Cookie {
 	return ctx.req.Cookies()
 }
 
-// CookieMaxAge ..
+// WithCookieMaxAge ..
 // maxAge: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.2
 // 		 = 0: 表示不指定存活时间
 // 		 < 0: 表示立即删除
 // 		 > 0: cookie 生存时间，单位秒
-func CookieMaxAge(maxAge int) CookieOption {
+func WithCookieMaxAge(maxAge int) CookieOption {
 	return func(cookie *http.Cookie) {
 		cookie.MaxAge = maxAge
 	}
 }
 
-// CookiePath path: https://tools.ietf.org/html/rfc6265#section-4.1.2.4
-func CookiePath(path string) CookieOption {
+// WithCookiePath path: https://tools.ietf.org/html/rfc6265#section-4.1.2.4
+func WithCookiePath(path string) CookieOption {
 	return func(cookie *http.Cookie) {
 		if path != "" {
 			cookie.Path = path
@@ -102,8 +149,8 @@ func CookiePath(path string) CookieOption {
 	}
 }
 
-// CookieDomain domain: https://tools.ietf.org/html/rfc6265#section-4.1.2.3
-func CookieDomain(domain string) CookieOption {
+// WithCookieDomain domain: https://tools.ietf.org/html/rfc6265#section-4.1.2.3
+func WithCookieDomain(domain string) CookieOption {
 	return func(cookie *http.Cookie) {
 		if domain != "" {
 			cookie.Domain = domain
@@ -111,22 +158,22 @@ func CookieDomain(domain string) CookieOption {
 	}
 }
 
-// CookieSecure secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.5
-func CookieSecure(secure bool) CookieOption {
+// WithCookieSecure secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.5
+func WithCookieSecure(secure bool) CookieOption {
 	return func(cookie *http.Cookie) {
 		cookie.Secure = secure
 	}
 }
 
-// CookieHTTPOnly secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.6
-func CookieHTTPOnly(httpOnly bool) CookieOption {
+// WithCookieHTTPOnly secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.6
+func WithCookieHTTPOnly(httpOnly bool) CookieOption {
 	return func(cookie *http.Cookie) {
 		cookie.HttpOnly = httpOnly
 	}
 }
 
-// CookieSign 对 cookie 进行签名
-func CookieSign(signKey string) CookieOption {
+// WithCookieSign 对 cookie 进行签名
+func WithCookieSign(signKey string) CookieOption {
 	return func(cookie *http.Cookie) {
 		if cookie.Name == "" {
 			return
@@ -134,8 +181,8 @@ func CookieSign(signKey string) CookieOption {
 
 		timestamp := strconv.Itoa(int(time.Now()))
 
-		buf := buffer()
-		defer releaseBuffer(buf)
+		buf := cookieBuffer()
+		defer cookeReleaseBuffer(buf)
 
 		buf.WriteString(cookie.Name)
 		buf.WriteString(cookie.Value)
@@ -154,8 +201,8 @@ func CookieSign(signKey string) CookieOption {
 	}
 }
 
-// CookieVerify 对有签名的 cookie 进行验证
-func CookieVerify(signKey string) CookieOption {
+// WithCookieVerify 对有签名的 cookie 进行验证
+func WithCookieVerify(signKey string) CookieOption {
 	return func(cookie *http.Cookie) {
 		if cookie.Value == "" {
 			return
@@ -172,8 +219,8 @@ func CookieVerify(signKey string) CookieOption {
 		timestamp := l[1]
 		sign := l[2]
 
-		buf := buffer()
-		defer releaseBuffer(buf)
+		buf := cookieBuffer()
+		defer cookeReleaseBuffer(buf)
 
 		buf.WriteString(cookie.Name)
 		buf.WriteString(value)
@@ -189,23 +236,23 @@ func CookieVerify(signKey string) CookieOption {
 	}
 }
 
-var bufferPool *sync.Pool
+var cookieBufferPool *sync.Pool
 
-// buffer 从池中获取 buffer
-func buffer() *bytes.Buffer {
-	buff := bufferPool.Get().(*bytes.Buffer)
+// cookieBuffer 从池中获取 buffer
+func cookieBuffer() *bytes.Buffer {
+	buff := cookieBufferPool.Get().(*bytes.Buffer)
 	buff.Reset()
 	return buff
 }
 
-// releaseBuffer 将 buff 放入池中
-func releaseBuffer(buff *bytes.Buffer) {
-	bufferPool.Put(buff)
+// cookeReleaseBuffer 将 buff 放入池中
+func cookeReleaseBuffer(buff *bytes.Buffer) {
+	cookieBufferPool.Put(buff)
 }
 
 func init() {
-	bufferPool = &sync.Pool{}
-	bufferPool.New = func() interface{} {
+	cookieBufferPool = &sync.Pool{}
+	cookieBufferPool.New = func() interface{} {
 		return &bytes.Buffer{}
 	}
 }

@@ -16,6 +16,7 @@ func main() {
 
 	a.Get("/", helloworldHandle)
 
+	// 监听信号，比如优雅关闭
 	a.Server().HTTPServer().ListenSignal()
 
 	a.Run("127.0.0.1:8877")

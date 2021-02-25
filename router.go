@@ -3,9 +3,6 @@ package zeroapi
 // Router 路由管理器
 type Router interface {
 
-	// App 返回应用实例
-	App() App
-
 	// Prefix 设置前缀，设置前就已添加的路由不会有该前缀
 	// 例如: prefix = "/blog"，则 "/user" -> "/blog/user"
 	Prefix(prefix string)
@@ -35,7 +32,7 @@ type router struct {
 
 	prefix string
 
-	// routes 存储路由
+	// routes 按照 Method 存储路由
 	routes map[string]Route
 
 	// validators 存储验证函数
@@ -49,11 +46,6 @@ func NewRouter(app App) Router {
 		routes:     make(map[string]Route, len(AllMethods())),
 		validators: make(map[string]RouterValidator),
 	}
-}
-
-// App 返回应用实例
-func (r *router) App() App {
-	return r.app
 }
 
 // Prefix 设置前缀，设置前就已添加的路由不会有该前缀
@@ -96,7 +88,7 @@ func (r *router) Register(method, path string, handlers ...Handler) bool {
 	return true
 }
 
-// Build 解析路由，包括动态参数，正则表达式，验证函数
+// Build 解析路由，包括动态参数，正则表达式，验证函数的解析，路由路径查找优化
 func (r *router) Build() bool {
 	for _, re := range r.routes {
 		if !re.Build(r) {
@@ -107,7 +99,7 @@ func (r *router) Build() bool {
 	return true
 }
 
-// Build 解析路由，包括动态参数，正则表达式，验证函数
+// Lookup 查找路由
 func (r *router) Lookup(method, path string) ([]Handler, map[string]string) {
 	if re := r.routes[method]; re != nil {
 		return re.Lookup(path)

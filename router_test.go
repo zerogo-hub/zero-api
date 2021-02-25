@@ -10,11 +10,6 @@ func TestRouterRegister(t *testing.T) {
 	a := zeroapi.NewApp()
 	r := a.Router()
 
-	a0 := r.App()
-	if a != a0 {
-		t.Fatal("a != a0")
-	}
-
 	// 错误的路由前缀
 	r.Prefix("")
 
