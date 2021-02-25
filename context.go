@@ -29,6 +29,9 @@ type Context interface {
 
 // Base 基础
 type Base interface {
+	// App 返回应用实例
+	App() App
+
 	// Reset 重置
 	Reset(res http.ResponseWriter, req *http.Request)
 
@@ -118,6 +121,11 @@ func NewContext(app App) Context {
 	return &context{
 		app: app,
 	}
+}
+
+// App 返回应用实例
+func (ctx *context) App() App {
+	return ctx.app
 }
 
 func (ctx *context) Reset(res http.ResponseWriter, req *http.Request) {
