@@ -35,6 +35,16 @@ func TestRouteNodeStatic(t *testing.T) {
 	}
 }
 
+func TestRouteNodeRoot(t *testing.T) {
+	route := zeroapi.NewRoute()
+	route.Insert("/", emptyHandle)
+	route.Build(nil)
+
+	if route.Path() != "/" {
+		t.Fatal("invalid root path")
+	}
+}
+
 func TestRouteNodeEmpty(t *testing.T) {
 	route := zeroapi.NewRoute()
 

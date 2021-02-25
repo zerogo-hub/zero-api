@@ -148,6 +148,10 @@ func NewRoute() Route {
 }
 
 func buildPath(path string) []string {
+	if path == "/" {
+		return []string{"/"}
+	}
+
 	paths := strings.Split(path, "/")
 
 	out := make([]string, 0, len(paths)-1)
