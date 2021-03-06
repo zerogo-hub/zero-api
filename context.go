@@ -83,6 +83,12 @@ type Base interface {
 
 	// Stopped 设置停止状态
 	Stopped()
+
+	// Value 获取对应的自定义值
+	Value(key string) interface{}
+
+	// SetValue 设置对应的自定义值
+	SetValue(key string, value interface{})
 }
 
 type context struct {
@@ -106,6 +112,9 @@ type context struct {
 	// 调用路由: /blog/1001
 	// dynamics = {id: "1001"}
 	dynamics map[string]string
+
+	// values 玩家自定义数据
+	values map[string]interface{}
 
 	// afters 存储钩子函数，路由执行成功后才会执行
 	afters []HookHandler
@@ -236,4 +245,22 @@ func (ctx *context) IsStopped() bool {
 
 func (ctx *context) Stopped() {
 	ctx.status = ContextStatusStopped
+}
+
+// Value 获取对应的自定义值
+func (ctx *context) Value(key string) interface{} {
+	if ctx.values == nil {
+		return nil
+	}
+
+	return ctx.values[key]
+}
+
+// SetValue 设置对应的自定义值
+func (ctx *context) SetValue(key string, value interface{}) {
+	if ctx.values == nil {
+		ctx.values = make(map[string]interface{})
+	}
+
+	ctx.values[key] = value
 }
