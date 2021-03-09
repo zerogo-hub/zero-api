@@ -100,7 +100,7 @@ type context struct {
 	// req http 请求
 	req *http.Request
 	// res http 响应
-	res http.ResponseWriter
+	res Writer
 	// httpCode
 	httpCode int
 	// responseSize 响应内容大小
@@ -138,7 +138,8 @@ func (ctx *context) App() App {
 }
 
 func (ctx *context) Reset(res http.ResponseWriter, req *http.Request) {
-	ctx.res = res
+	ctx.res = acquireWriter()
+	ctx.res.SetWriter(res)
 	ctx.req = req
 	ctx.status = ContextStatusNormal
 	ctx.httpCode = http.StatusOK
@@ -152,7 +153,7 @@ func (ctx *context) Request() *http.Request {
 }
 
 func (ctx *context) Response() http.ResponseWriter {
-	return ctx.res
+	return ctx.res.Writer()
 }
 
 func (ctx *context) Method() string {
@@ -169,7 +170,7 @@ func (ctx *context) HTTPCode() int {
 
 func (ctx *context) SetHTTPCode(httpCode int) {
 	ctx.httpCode = httpCode
-	ctx.res.WriteHeader(httpCode)
+	ctx.res.Writer().WriteHeader(httpCode)
 }
 
 func (ctx *context) IP() string {

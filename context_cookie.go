@@ -107,7 +107,7 @@ func (ctx *context) SetCookie(name, value string, opts ...CookieOption) {
 		cookie.Value = handler(cookie.Value)
 	}
 
-	http.SetCookie(ctx.res, cookie)
+	http.SetCookie(ctx.res.Writer(), cookie)
 }
 
 // RemoveCookie 移除指定的 cookie
@@ -121,7 +121,7 @@ func (ctx *context) SetHTTPCookie(cookie *http.Cookie) {
 		panic("Cookie cannot be empty")
 	}
 
-	http.SetCookie(ctx.res, cookie)
+	http.SetCookie(ctx.res.Writer(), cookie)
 }
 
 // HTTPCookies 获取所有原始的 cookie

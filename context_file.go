@@ -83,7 +83,7 @@ func (ctx *context) Files(destDirectory string, cbs ...func(Context, *multipart.
 
 func (ctx *context) DownloadFile(path string, filename ...string) {
 	if !file.IsExist(path) {
-		http.ServeFile(ctx.res, ctx.req, path)
+		http.ServeFile(ctx.res.Writer(), ctx.req, path)
 		return
 	}
 
@@ -101,5 +101,5 @@ func (ctx *context) DownloadFile(path string, filename ...string) {
 	ctx.AddHeader("Expires", "0")
 	ctx.AddHeader("Cache-Control", "must-revalidate")
 	ctx.AddHeader("Pragma", "public")
-	http.ServeFile(ctx.res, ctx.req, path)
+	http.ServeFile(ctx.res.Writer(), ctx.req, path)
 }

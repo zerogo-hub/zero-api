@@ -71,7 +71,7 @@ func (ctx *context) Bytes(bytes []byte) (int, error) {
 	var size int
 	var err error
 
-	size, err = ctx.res.Write(bytes)
+	size, err = ctx.res.Writer().Write(bytes)
 
 	if err != nil {
 		return 0, err
@@ -86,7 +86,7 @@ func (ctx *context) Text(value string) (int, error) {
 	var size int
 	var err error
 
-	size, err = ctx.res.Write(bytes.StringToBytes(value))
+	size, err = ctx.res.Writer().Write(bytes.StringToBytes(value))
 
 	if err != nil {
 		return 0, err
@@ -164,19 +164,19 @@ func (ctx *context) Redirect(httpCode int, url string) error {
 	}
 
 	ctx.Stopped()
-	http.Redirect(ctx.res, ctx.req, url, httpCode)
+	http.Redirect(ctx.res.Writer(), ctx.req, url, httpCode)
 
 	return nil
 }
 
 func (ctx *context) Flush() {
-	if flusher, ok := ctx.res.(http.Flusher); ok {
+	if flusher, ok := ctx.res.Writer().(http.Flusher); ok {
 		flusher.Flush()
 	}
 }
 
 func (ctx *context) Push(value string, opts *http.PushOptions) error {
-	if push, ok := ctx.res.(http.Pusher); ok {
+	if push, ok := ctx.res.Writer().(http.Pusher); ok {
 		push.Push(value, opts)
 	}
 
