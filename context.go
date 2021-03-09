@@ -38,8 +38,8 @@ type Base interface {
 	// Request 获取原始 http 请求
 	Request() *http.Request
 
-	// Response 获取原始 http 响应
-	Response() http.ResponseWriter
+	// Response 获取 http 响应
+	Response() Writer
 
 	// Method 获取当前响应的 HTTP Method，比如 GET, POST ...
 	Method() string
@@ -152,8 +152,8 @@ func (ctx *context) Request() *http.Request {
 	return ctx.req
 }
 
-func (ctx *context) Response() http.ResponseWriter {
-	return ctx.res.Writer()
+func (ctx *context) Response() Writer {
+	return ctx.res
 }
 
 func (ctx *context) Method() string {
