@@ -2,6 +2,7 @@ package zeroapi
 
 import (
 	"bytes"
+	"errors"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -13,7 +14,7 @@ import (
 )
 
 // CookieOption cookie 选项
-type CookieOption func(cookie *http.Cookie)
+type CookieOption func(cookie *http.Cookie) error
 
 // Cookie cookie 相关
 type Cookie interface {
@@ -71,7 +72,9 @@ func (ctx *context) Cookie(name string, opts ...CookieOption) (string, error) {
 	}
 
 	for _, opt := range opts {
-		opt(cookie)
+		if err := opt(cookie); err != nil {
+			return "", err
+		}
 	}
 
 	val, err := url.QueryUnescape(cookie.Value)
@@ -135,48 +138,53 @@ func (ctx *context) HTTPCookies() []*http.Cookie {
 // 		 < 0: 表示立即删除
 // 		 > 0: cookie 生存时间，单位秒
 func WithCookieMaxAge(maxAge int) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		cookie.MaxAge = maxAge
+		return nil
 	}
 }
 
 // WithCookiePath path: https://tools.ietf.org/html/rfc6265#section-4.1.2.4
 func WithCookiePath(path string) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		if path != "" {
 			cookie.Path = path
 		}
+		return nil
 	}
 }
 
 // WithCookieDomain domain: https://tools.ietf.org/html/rfc6265#section-4.1.2.3
 func WithCookieDomain(domain string) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		if domain != "" {
 			cookie.Domain = domain
 		}
+		return nil
 	}
 }
 
 // WithCookieSecure secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.5
 func WithCookieSecure(secure bool) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		cookie.Secure = secure
+		return nil
 	}
 }
 
 // WithCookieHTTPOnly secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.6
 func WithCookieHTTPOnly(httpOnly bool) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		cookie.HttpOnly = httpOnly
+		return nil
 	}
 }
 
 // WithCookieSign 对 cookie 进行签名
 func WithCookieSign(signKey string) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		if cookie.Name == "" {
-			return
+			return errors.New("cookie name is empty")
 		}
 
 		timestamp := strconv.Itoa(int(time.Now()))
@@ -198,21 +206,23 @@ func WithCookieSign(signKey string) CookieOption {
 		buf.WriteString(sign)
 
 		cookie.Value = buf.String()
+
+		return nil
 	}
 }
 
 // WithCookieVerify 对有签名的 cookie 进行验证
 func WithCookieVerify(signKey string) CookieOption {
-	return func(cookie *http.Cookie) {
+	return func(cookie *http.Cookie) error {
 		if cookie.Value == "" {
-			return
+			return errors.New("cookie value is empty")
 		}
 
 		l := strings.Split(cookie.Value, "|")
 		if len(l) != 3 {
 			// cookie 值被篡改
 			cookie.Value = ""
-			return
+			return errors.New("invalid cookie value 1")
 		}
 
 		value := l[0]
@@ -230,9 +240,11 @@ func WithCookieVerify(signKey string) CookieOption {
 		if calcSign != sign {
 			// cookie 值被篡改
 			cookie.Value = ""
-		} else {
-			cookie.Value = value
+			return errors.New("invalid cookie value 2")
 		}
+
+		cookie.Value = value
+		return nil
 	}
 }
 
