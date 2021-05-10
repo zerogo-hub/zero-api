@@ -46,7 +46,13 @@ func NewGroup(app App, prefix string) Group {
 
 // Use 添加 Group 级别 中间件
 func (g *group) Use(handlers ...Handler) Group {
-	g.middlewares = append(g.middlewares, handlers...)
+
+	for _, handler := range handlers {
+		if handler != nil {
+			g.middlewares = append(g.middlewares, handler)
+		}
+	}
+
 	return g
 }
 

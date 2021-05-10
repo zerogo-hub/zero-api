@@ -82,6 +82,10 @@ func (s *server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 
 	// 执行路由处理函数和路由级别中间件
 	for _, handler := range handlers {
+		if handler == nil {
+			continue
+		}
+
 		handler(ctx)
 		if ctx.IsStopped() {
 			return

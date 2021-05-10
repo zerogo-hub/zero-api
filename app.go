@@ -196,7 +196,11 @@ func (a *app) CookieDecodeHandler() CookieDecodeHandler {
 
 // Use 添加 App 级别 中间件，每一次路由都会调用公共中间件
 func (a *app) Use(handlers ...Handler) {
-	a.middlewares = append(a.middlewares, handlers...)
+	for _, handler := range handlers {
+		if handler != nil {
+			a.middlewares = append(a.middlewares, handler)
+		}
+	}
 }
 
 // ExecuteMiddlewares 执行 App 级别的中间件

@@ -129,7 +129,7 @@ func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers .
 	if len(paths) == height || rn.IsWildcard() {
 		// 本次路由的最终节点
 		rn.fullPath = fullPath
-		rn.handlers = handlers
+		rn.handlers = handlersWithoutNil(handlers...)
 		return
 	}
 
@@ -143,6 +143,19 @@ func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers .
 	}
 
 	child.Put(fullPath, paths, height+1, handlers...)
+}
+
+func handlersWithoutNil(handlers ...Handler) []Handler {
+
+	out := make([]Handler, 0, len(handlers))
+
+	for _, handler := range handlers {
+		if handler != nil {
+			out = append(out, handler)
+		}
+	}
+
+	return out
 }
 
 func newChild(path string) RouteNode {
