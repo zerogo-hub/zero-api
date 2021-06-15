@@ -1,4 +1,17 @@
-## zero-web
+## zero-api
+
+小巧的 api
+
+## 主要文件
+
+- app.go 应用，负责整合`Server`和`Router`
+- context.go 一次请求的上下文
+- cookie.go `Cookie`相关
+- group.go 组路由，即一组由相同前缀组成的路由
+- option.go 应用的选项设置
+- route.go 每一个`Method(GET/POST/PUT...)`的路由由一个`Route`存储
+- router.go 路由管理器
+- server.go `HTTP Server`
 
 ## 路由
 

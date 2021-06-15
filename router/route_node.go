@@ -1,84 +1,11 @@
-package zeroapi
+package router
 
 import (
 	"regexp"
 	"strings"
+
+	zeroapi "github.com/zerogo-hub/zero-api"
 )
-
-// Route 路由，每一个 Route 表示一颗基数树，每种 HTTP Method 一个实例
-type Route interface {
-	// Insert 添加路由，路由不可重复
-	Insert(path string, handlers ...Handler)
-
-	// Build 解析路由，包括动态参数，正则表达式，验证函数。路由优化
-	Build(router Router) bool
-
-	// Lookup 查找路由
-	Lookup(path string) ([]Handler, map[string]string)
-
-	// Path 获取当前节点路径
-	Path() string
-
-	// Child 查找子节点信息
-	Child(path string) RouteNode
-
-	// Children 获取子节点列表
-	Children() []RouteNode
-
-	// Reset 重置，清理所有数据
-	Reset()
-}
-
-// RouteNode 一颗基数树的一个节点
-type RouteNode interface {
-	// Put 添加路由，路由不可重复
-	Put(fullPath string, paths []string, height int, handlers ...Handler)
-
-	// Build 解析路由，包括动态参数，正则表达式，验证函数。路由优化
-	Build(router Router) bool
-
-	// Lookup 查找路由
-	Lookup(path string, dynamic map[string]string) ([]Handler, map[string]string)
-
-	// Path 获取当前节点路径
-	Path() string
-
-	// Child 查找子节点信息
-	Child(path string) RouteNode
-
-	// Children 获取子节点列表
-	Children() []RouteNode
-
-	// Flag 获取标记
-	Flag() int
-
-	// Handlers 获取路由处理函数和中间件
-	Handlers() []Handler
-
-	// DynamicNum 获取动态节点数量
-	DynamicNum() int
-
-	// IsStatic 静态路由
-	IsStatic() bool
-
-	// IsDynamic 含有动态参数
-	IsDynamic() bool
-
-	// IsWildcard 含有通配符
-	IsWildcard() bool
-
-	// IsRegexp 含有正则表达式
-	IsRegexp() bool
-
-	// IsValidator 含有验证函数
-	IsValidator() bool
-
-	// IsHandler 是否有路由处理函数或者中间件
-	IsHandler() bool
-
-	// Reset 重置，清理所有数据
-	Reset()
-}
 
 const (
 	// DynamicCharacter 动态路由符号，比如 /user/:name
@@ -105,12 +32,6 @@ const (
 	VALIDATOR = 2 << 3
 )
 
-// route 实现一颗基数树
-type route struct {
-	// root 基数树根节点
-	root RouteNode
-}
-
 // routeNode 一颗基数树的一个节点
 type routeNode struct {
 
@@ -121,10 +42,10 @@ type routeNode struct {
 	path string
 
 	// handlers 路由处理函数 + 路由级别中间件
-	handlers []Handler
+	handlers []zeroapi.Handler
 
 	// validators 参数校验
-	validators []RouterValidator
+	validators []zeroapi.RouterValidator
 
 	// flag 用于标记节点是否含有 动态参数(:param),通配符(*),正则表达式(regexp),验证函数(validator)
 	flag int
@@ -139,149 +60,13 @@ type routeNode struct {
 	pattern *regexp.Regexp
 
 	// children 子节点
-	children []RouteNode
-}
-
-// NewRoute ..
-func NewRoute() Route {
-	return &route{root: new(routeNode)}
-}
-
-func buildPath(path string) []string {
-	if path == "/" {
-		return []string{"/"}
-	}
-
-	paths := strings.Split(path, "/")
-
-	out := make([]string, 0, len(paths)-1)
-
-	for _, p := range paths {
-		if p == "" {
-			continue
-		}
-
-		out = append(out, "/"+p)
-		if p[0] == WildcardCharacter {
-			break
-		}
-	}
-
-	return out
-}
-
-// Insert 添加路由，路由不可重复
-func (re *route) Insert(path string, handlers ...Handler) {
-	paths := buildPath(path)
-	re.root.Put(path, paths, 0, handlers...)
-}
-
-// Build 解析路由，包括动态参数，正则表达式，验证函数
-func (re *route) Build(router Router) bool {
-	return re.root.Build(router)
-}
-
-// Lookup 查找路由
-func (re *route) Lookup(path string) ([]Handler, map[string]string) {
-	return re.root.Lookup(path, nil)
-}
-
-// Path 获取当前节点路径
-func (re *route) Path() string {
-	return re.root.Path()
-}
-
-// Child 查找子节点信息
-func (re *route) Child(path string) RouteNode {
-	for _, child := range re.root.Children() {
-		if child.Path() == path {
-			return child
-		}
-	}
-
-	return nil
-}
-
-// Children 获取子节点列表
-func (re *route) Children() []RouteNode {
-	return re.root.Children()
-}
-
-// Reset 重置，清理所有数据
-func (re *route) Reset() {
-	re.root.Reset()
-}
-
-// IsStatic 静态路由
-func (rn *routeNode) IsStatic() bool {
-	return rn.flag == 0
-}
-
-// IsDynamic 含有动态参数
-func (rn *routeNode) IsDynamic() bool {
-	return rn.flag&DYNAMIC != 0
-}
-
-// IsWildcard 含有通配符
-func (rn *routeNode) IsWildcard() bool {
-	return rn.flag&WILDCARD != 0
-}
-
-// IsRegexp 含有正则表达式
-func (rn *routeNode) IsRegexp() bool {
-	return rn.flag&REGEXP != 0
-}
-
-// IsValidator 含有验证函数
-func (rn *routeNode) IsValidator() bool {
-	return rn.flag&VALIDATOR != 0
-}
-
-// IsHandler 是否有路由处理函数或者中间件
-func (rn *routeNode) IsHandler() bool {
-	return rn.handlers != nil && len(rn.handlers) > 0
-}
-
-// Child 查找子节点信息
-func (rn *routeNode) Child(path string) RouteNode {
-	for _, child := range rn.children {
-		if child.Path() == path {
-			return child
-		}
-	}
-
-	return nil
-}
-
-// Children 获取子节点列表
-func (rn *routeNode) Children() []RouteNode {
-	return rn.children
-}
-
-// Flag 获取标记
-func (rn *routeNode) Flag() int {
-	return rn.flag
-}
-
-// Handlers 获取路由处理函数和中间件
-func (rn *routeNode) Handlers() []Handler {
-	return rn.handlers
-}
-
-// DynamicNum 获取动态节点数量
-func (rn *routeNode) DynamicNum() int {
-	return rn.dynamicNum
-}
-
-// Path 获取当前节点路径
-func (rn *routeNode) Path() string {
-	return rn.path
+	children []zeroapi.RouteNode
 }
 
 // put 添加路由
 //
 // fullPath 完整路径，例如 /blog/:id/borrow
-func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers ...Handler) {
+func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers ...zeroapi.Handler) {
 	if len(handlers) == 0 {
 		return
 	}
@@ -289,7 +74,7 @@ func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers .
 	if len(paths) == height || rn.IsWildcard() {
 		// 本次路由的最终节点
 		rn.fullPath = fullPath
-		rn.handlers = handlers
+		rn.handlers = handlersWithoutNil(handlers...)
 		return
 	}
 
@@ -305,7 +90,20 @@ func (rn *routeNode) Put(fullPath string, paths []string, height int, handlers .
 	child.Put(fullPath, paths, height+1, handlers...)
 }
 
-func newChild(path string) RouteNode {
+func handlersWithoutNil(handlers ...zeroapi.Handler) []zeroapi.Handler {
+
+	out := make([]zeroapi.Handler, 0, len(handlers))
+
+	for _, handler := range handlers {
+		if handler != nil {
+			out = append(out, handler)
+		}
+	}
+
+	return out
+}
+
+func newChild(path string) zeroapi.RouteNode {
 	flag := STATIC
 
 	if len(path) > 1 {
@@ -322,7 +120,7 @@ func newChild(path string) RouteNode {
 }
 
 // child 在子节点中查找已存在的节点
-func (rn *routeNode) child(path string) RouteNode {
+func (rn *routeNode) child(path string) zeroapi.RouteNode {
 	for _, child := range rn.children {
 		if child.Path() == path || child.IsWildcard() {
 			return child
@@ -332,7 +130,8 @@ func (rn *routeNode) child(path string) RouteNode {
 	return nil
 }
 
-func (rn *routeNode) Build(router Router) bool {
+// Build 解析路由，包括动态参数，正则表达式，验证函数。路由优化
+func (rn *routeNode) Build(router zeroapi.Router) bool {
 	if rn.IsWildcard() {
 		return true
 	}
@@ -388,7 +187,7 @@ func (rn *routeNode) parseRegexp() bool {
 // parseValidator 解析当前节点 path 上的验证函数
 //
 // 验证函数必须现在 Router 中注册
-func (rn *routeNode) parseValidator(router Router) bool {
+func (rn *routeNode) parseValidator(router zeroapi.Router) bool {
 	if router == nil {
 		return true
 	}
@@ -411,7 +210,7 @@ func (rn *routeNode) parseValidator(router Router) bool {
 		return false
 	}
 
-	rn.validators = make([]RouterValidator, 0, len(handlerNames))
+	rn.validators = make([]zeroapi.RouterValidator, 0, len(handlerNames))
 
 	for _, handlerName := range handlerNames {
 		handler := router.Validator(handlerName)
@@ -449,7 +248,7 @@ func (rn *routeNode) parseDynamic() bool {
 	return true
 }
 
-// merge 合并，如果只有一个子节点，且子节点是 STATIC 的，则合并
+// merge 路由合并，如果只有一个子节点，且子节点是 STATIC 的，则合并
 func (rn *routeNode) merge() {
 	if len(rn.children) != 1 || !rn.IsStatic() || rn.IsHandler() {
 		return
@@ -493,7 +292,7 @@ func (rn *routeNode) countDynamicNum() {
 	rn.dynamicNum = dynamicNum
 }
 
-func (rn *routeNode) Lookup(path string, dynamic map[string]string) ([]Handler, map[string]string) {
+func (rn *routeNode) Lookup(path string, dynamic map[string]string) ([]zeroapi.Handler, map[string]string) {
 
 	if rn.IsWildcard() {
 		return rn.handlers, dynamic
@@ -506,7 +305,7 @@ func (rn *routeNode) Lookup(path string, dynamic map[string]string) ([]Handler, 
 	return rn.lookupByStatic(path, dynamic)
 }
 
-func (rn *routeNode) lookupByStatic(path string, dynamic map[string]string) ([]Handler, map[string]string) {
+func (rn *routeNode) lookupByStatic(path string, dynamic map[string]string) ([]zeroapi.Handler, map[string]string) {
 	if rn.path == path {
 		return rn.handlers, dynamic
 	}
@@ -533,7 +332,7 @@ func (rn *routeNode) lookupByStatic(path string, dynamic map[string]string) ([]H
 	return nil, nil
 }
 
-func (rn *routeNode) lookupByDynamic(path string, dynamic map[string]string) ([]Handler, map[string]string) {
+func (rn *routeNode) lookupByDynamic(path string, dynamic map[string]string) ([]zeroapi.Handler, map[string]string) {
 
 	// rn.path = /:id，path = /1001/add
 	if dynamic == nil {
@@ -600,6 +399,32 @@ func (rn *routeNode) checkValidator(dynamicValue string) bool {
 	return true
 }
 
+// Path 获取当前节点路径
+func (rn *routeNode) Path() string {
+	return rn.path
+}
+
+// Child 查找节点信息
+func (rn *routeNode) Child(path string) zeroapi.RouteNode {
+	for _, child := range rn.children {
+		if child.Path() == path {
+			return child
+		}
+	}
+
+	return nil
+}
+
+// Children 获取节点列表
+func (rn *routeNode) Children() []zeroapi.RouteNode {
+	return rn.children
+}
+
+// Handlers 获取路由处理函数和中间件
+func (rn *routeNode) Handlers() []zeroapi.Handler {
+	return rn.handlers
+}
+
 // Reset 重置，清理所有数据
 func (rn *routeNode) Reset() {
 	rn.fullPath = ""
@@ -611,4 +436,44 @@ func (rn *routeNode) Reset() {
 	rn.dynamicNum = 0
 	rn.pattern = nil
 	rn.children = nil
+}
+
+// IsStatic 静态路由
+func (rn *routeNode) IsStatic() bool {
+	return rn.flag == 0
+}
+
+// IsDynamic 含有动态参数
+func (rn *routeNode) IsDynamic() bool {
+	return rn.flag&DYNAMIC != 0
+}
+
+// IsWildcard 含有通配符
+func (rn *routeNode) IsWildcard() bool {
+	return rn.flag&WILDCARD != 0
+}
+
+// IsRegexp 含有正则表达式
+func (rn *routeNode) IsRegexp() bool {
+	return rn.flag&REGEXP != 0
+}
+
+// IsValidator 含有验证函数
+func (rn *routeNode) IsValidator() bool {
+	return rn.flag&VALIDATOR != 0
+}
+
+// IsHandler 是否有路由处理函数或者中间件
+func (rn *routeNode) IsHandler() bool {
+	return rn.handlers != nil && len(rn.handlers) > 0
+}
+
+// Flag 获取标记
+func (rn *routeNode) Flag() int {
+	return rn.flag
+}
+
+// DynamicNum 获取动态节点数量
+func (rn *routeNode) DynamicNum() int {
+	return rn.dynamicNum
 }

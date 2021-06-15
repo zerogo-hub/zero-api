@@ -1,23 +1,26 @@
-package zeroapi_test
+package router_test
 
 import (
 	"regexp"
 	"testing"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
+	app "github.com/zerogo-hub/zero-api/app"
+	router "github.com/zerogo-hub/zero-api/router"
 )
 
 func emptyHandle(zeroapi.Context) {}
 
 func TestRouteNodeStatic(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog", emptyHandle)
 	route.Insert("/blog/a/b/c/d", emptyHandle)
 
 	route.Build(nil)
 
-	if route.Path() != "/blog" {
+	root := route.Child("/blog")
+	if root.Path() != "/blog" {
 		t.Fatal("invalid path")
 	}
 
@@ -36,36 +39,26 @@ func TestRouteNodeStatic(t *testing.T) {
 }
 
 func TestRouteNodeRoot(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 	route.Insert("/", emptyHandle)
 	route.Build(nil)
 
-	if route.Path() != "/" {
+	root := route.Child("/")
+	if root.Path() != "/" {
 		t.Fatal("invalid root path")
 	}
 }
 
-func TestRouteNodeEmpty(t *testing.T) {
-	route := zeroapi.NewRoute()
-
-	route.Insert("/blog")
-
-	route.Build(nil)
-
-	if route.Path() != "" {
-		t.Fatal("invalid route")
-	}
-}
-
 func TestRouteNodeDynamic(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog/:id/borrow", emptyHandle)
 	route.Insert("/blog/:id/name", emptyHandle)
 
 	route.Build(nil)
 
-	if route.Path() != "/blog" {
+	root := route.Child("/blog")
+	if root.Path() != "/blog" {
 		t.Fatal("invalid path")
 	}
 
@@ -89,14 +82,15 @@ func TestRouteNodeDynamic(t *testing.T) {
 }
 
 func TestRouteNodeMultiDynamic(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog/:id/borrow", emptyHandle)
 	route.Insert("/blog/:id/:account/:app/name", emptyHandle)
 
 	route.Build(nil)
 
-	if route.Path() != "/blog" {
+	root := route.Child("/blog")
+	if root.Path() != "/blog" {
 		t.Fatal("invalid path")
 	}
 
@@ -143,7 +137,7 @@ func TestRouteNodeMultiDynamic(t *testing.T) {
 }
 
 func TestRouteNodeDynamicNum(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog-1/:id/borrow/:account", emptyHandle)
 	route.Insert("/blog-2/:id/:account/:app/name", emptyHandle)
@@ -166,14 +160,16 @@ func TestRouteNodeDynamicNum(t *testing.T) {
 }
 
 func TestRouteNodeStaticDynamic(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog/user/add", emptyHandle)
 	route.Insert("/blog/user/:id/del", emptyHandle)
+	route.Insert("/blog/invalidHandler")
 
 	route.Build(nil)
 
-	if route.Path() != "/blog/user" {
+	root := route.Child("/blog/user")
+	if root.Path() != "/blog/user" {
 		t.Fatal("invalid route path")
 	}
 
@@ -198,13 +194,14 @@ func TestRouteNodeStaticDynamic(t *testing.T) {
 }
 
 func TestRouteNodeWildcard(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	route.Insert("/blog/notfound/*/abc", emptyHandle)
 
 	route.Build(nil)
 
-	if route.Path() != "/blog/notfound" {
+	root := route.Child("/blog/notfound")
+	if root.Path() != "/blog/notfound" {
 		t.Fatal("invalid path")
 	}
 
@@ -219,7 +216,7 @@ func TestRouteNodeWildcard(t *testing.T) {
 }
 
 func TestRouteDynamicParseRegexp(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	// 缺失右括号
 	route.Insert("/blog/list/:id(^\\d+$", emptyHandle)
@@ -252,12 +249,12 @@ func less4(s string) bool {
 }
 
 func TestRouteDynamicParseValidator(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
 
 	r.RegisterRouterValidator("isNum", isNum)
 
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 
 	// 没有验证函数
 	route.Insert("/blog/list/:id", emptyHandle)
@@ -291,98 +288,5 @@ func TestRouteDynamicParseValidator(t *testing.T) {
 	route.Insert("/blog/list/:id|isNum|", emptyHandle)
 	if !route.Build(r) {
 		t.Fatal("failed")
-	}
-}
-
-func TestRouteLookupStatic(t *testing.T) {
-	route := zeroapi.NewRoute()
-	route.Insert("/blog/name", emptyHandle)
-	route.Build(nil)
-
-	if handlers, dynamic := route.Lookup("/blog/name"); handlers == nil || dynamic != nil {
-		t.Fatal("invalid 1")
-	}
-
-	if handlers, dynamic := route.Lookup("/blog/name/add"); handlers != nil || dynamic != nil {
-		t.Fatal("invalid 2")
-	}
-
-	if handlers, dynamic := route.Lookup("/blog/na"); handlers != nil || dynamic != nil {
-		t.Fatal("invalid 3")
-	}
-}
-
-func TestRouteLookupNotFound(t *testing.T) {
-	route := zeroapi.NewRoute()
-	route.Insert("/blog/name", emptyHandle)
-	route.Build(nil)
-
-	if handlers, dynamic := route.Lookup("/blog/10001/name"); handlers != nil || dynamic != nil {
-		t.Fatal("invalid 1")
-	}
-}
-
-func TestRouteLookupDynamic(t *testing.T) {
-	a := zeroapi.NewApp()
-	r := a.Router()
-
-	r.RegisterRouterValidator("isNum", isNum)
-
-	route := zeroapi.NewRoute()
-	route.Insert("/blog/:id/name", emptyHandle)
-	route.Build(nil)
-
-	// 正常解析
-	if _, dynamic := route.Lookup("/blog/10001/name"); len(dynamic) == 0 || dynamic["id"] != "10001" {
-		t.Fatal("invalid 1")
-	}
-
-	if handlers, _ := route.Lookup("/blog/10001/account"); handlers != nil {
-		t.Fatal("invalid 2")
-	}
-
-	// 动态参数为最后一个
-	route.Reset()
-	route.Insert("/blog/:id(\\d+)", emptyHandle)
-	route.Build(nil)
-	if _, dynamic := route.Lookup("/blog/10001"); len(dynamic) == 0 || dynamic["id"] != "10001" {
-		t.Fatal("invalid 3")
-	}
-
-	// 使用正则表达式判断动态参数值
-	route.Reset()
-	route.Insert("/blog/:id(\\d+)", emptyHandle)
-	route.Build(nil)
-
-	if handlers, dynamic := route.Lookup("/blog/10001"); handlers == nil || len(dynamic) == 0 || dynamic["id"] != "10001" {
-		t.Fatal("failed")
-	}
-
-	if handlers, dynamic := route.Lookup("/blog/abc"); handlers != nil || len(dynamic) != 0 {
-		t.Fatal("failed")
-	}
-
-	// 使用验证函数判断动态参数值
-	route.Reset()
-	route.Insert("/blog/:id|isNum|", emptyHandle)
-	route.Build(r)
-
-	if handlers, dynamic := route.Lookup("/blog/10001"); handlers == nil || len(dynamic) == 0 || dynamic["id"] != "10001" {
-		t.Fatal("failed")
-	}
-
-	if handlers, dynamic := route.Lookup("/blog/abc"); handlers != nil || len(dynamic) != 0 {
-		t.Fatal("failed")
-	}
-}
-
-func TestRouteLookupDynamicWildcard(t *testing.T) {
-	route := zeroapi.NewRoute()
-	route.Insert("/blog/:id/*/name", emptyHandle)
-	route.Build(nil)
-
-	handlers, dynamic := route.Lookup("/blog/10001/abc/d/name")
-	if handlers == nil || len(dynamic) == 0 || dynamic["id"] != "10001" {
-		t.Fatal("invalid 1")
 	}
 }

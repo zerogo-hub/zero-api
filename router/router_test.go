@@ -1,19 +1,15 @@
-package zeroapi_test
+package router_test
 
 import (
 	"testing"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
+	app "github.com/zerogo-hub/zero-api/app"
 )
 
 func TestRouterRegister(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
-
-	a0 := r.App()
-	if a != a0 {
-		t.Fatal("a != a0")
-	}
 
 	// 错误的路由前缀
 	r.Prefix("")
@@ -38,7 +34,7 @@ func TestRouterRegister(t *testing.T) {
 }
 
 func TestRouterBuildFailed(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
 
 	r.Register(zeroapi.MethodGet, "/list/:id(\\d+", emptyHandle)
@@ -49,7 +45,7 @@ func TestRouterBuildFailed(t *testing.T) {
 }
 
 func TestRouterBuildSuccess(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
 	r.RegisterRouterValidator("isNum", isNum)
 
@@ -64,7 +60,7 @@ func TestRouterBuildSuccess(t *testing.T) {
 }
 
 func TestRouterLookup(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
 	r.RegisterRouterValidator("less4", less4)
 
