@@ -14,6 +14,9 @@ import (
 	"github.com/zerogo-hub/zero-api/server"
 
 	"github.com/zerogo-hub/zero-helper/logger"
+
+	zamcors "github.com/zerogo-hub/zero-api-middleware/cors"
+	zamlogger "github.com/zerogo-hub/zero-api-middleware/logger"
 )
 
 type app struct {
@@ -42,6 +45,11 @@ func New() zeroapi.App {
 // Default 生成默认的应用实例
 func Default() zeroapi.App {
 	a := NewApp()
+
+	// 请求日志
+	a.Use(zamlogger.New())
+	// 跨域
+	a.Use(zamcors.New(nil))
 
 	return a
 }
@@ -237,7 +245,6 @@ func (a *app) Static(prefix, path string) {
 		}
 		path := filepath.Join(path, _path.Clean("/"+fileName))
 		ctx.DownloadFile(path, fileName)
-		return
 	}
 
 	if prefix == "/" {
