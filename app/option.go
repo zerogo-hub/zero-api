@@ -1,6 +1,8 @@
-package zeroapi
+package app
 
 import (
+	zeroapi "github.com/zerogo-hub/zero-api"
+
 	"github.com/zerogo-hub/zero-helper/logger"
 )
 
@@ -21,15 +23,15 @@ type config struct {
 	logger logger.Logger
 
 	// cookieEncode 对 cookie 键值编码函数
-	cookieEncode CookieEncodeHandler
+	cookieEncode zeroapi.CookieEncodeHandler
 
 	// cookieDecode 对 cookie 键值解码函数
-	cookieDecode CookieDecodeHandler
+	cookieDecode zeroapi.CookieDecodeHandler
 }
 
 func defaultConfig() *config {
 	return &config{
-		version:       VERSION,
+		version:       zeroapi.VERSION,
 		fileMaxMemory: defaultFileMaxMemory,
 		logger:        logger.NewSampleLogger(),
 	}
@@ -60,7 +62,7 @@ func WithLogger(logger logger.Logger) Option {
 }
 
 // WithCookieHandler 设置 cookie 编码与解码函数
-func WithCookieHandler(encoder CookieEncodeHandler, decoder CookieDecodeHandler) Option {
+func WithCookieHandler(encoder zeroapi.CookieEncodeHandler, decoder zeroapi.CookieDecodeHandler) Option {
 	return func(config *config) {
 		config.cookieEncode = encoder
 		config.cookieDecode = decoder

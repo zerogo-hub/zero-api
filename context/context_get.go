@@ -1,51 +1,8 @@
-package zeroapi
+package context
 
-import "strconv"
-
-// Get 只包括 GET
-type Get interface {
-	// Get 获取指定参数的值
-	// 多个参数同名，只获取第一个
-	// 例如 /user?id=Yaha&id=Gama
-	// Get("id") 的结果为 "Yaha"
-	Get(key string) string
-
-	// GetEscape 获取指定参数的值，并对被编码的结果进行解码
-	GetEscape(key string) string
-
-	// GetBool 获取指定参数的值，并将结果转为 bool
-	GetBool(key string) bool
-
-	// GetInt32 获取指定参数的值，并将结果转为 int32
-	GetInt32(key string) int32
-
-	// GetInt64 获取指定参数的值，并将结果转为 int64
-	GetInt64(key string) int64
-
-	// GetFloat32 获取指定参数的值，并将结果转为 float32
-	GetFloat32(key string) float32
-
-	// GetFloat64 获取指定参数的值，并将结果转为 float64
-	GetFloat64(key string) float64
-
-	// GetDefault 获取指定参数的值，如果不存在，则返回默认值 def
-	GetDefault(key, def string) string
-
-	// GetBoolDefault 获取指定参数的值(结果转为 bool)，如果不存在，则返回默认值 def
-	GetBoolDefault(key string, def bool) bool
-
-	// GetInt32Default 获取指定参数的值(结果转为 int32)，如果不存在，则返回默认值 def
-	GetInt32Default(key string, def int32) int32
-
-	// GetInt64Default 获取指定参数的值(结果转为 int64)，如果不存在，则返回默认值 def
-	GetInt64Default(key string, def int64) int64
-
-	// GetFloat32Default 获取指定参数的值(结果转为 float32)，如果不存在，则返回默认值 def
-	GetFloat32Default(key string, def float32) float32
-
-	// GetFloat64Default 获取指定参数的值(结果转为 float64)，如果不存在，则返回默认值 def
-	GetFloat64Default(key string, def float64) float64
-}
+import (
+	"strconv"
+)
 
 func (ctx *context) Get(key string) string {
 	return ctx.req.URL.Query().Get(key)

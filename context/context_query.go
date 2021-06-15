@@ -1,64 +1,9 @@
-package zeroapi
+package context
 
 import (
 	"net/url"
 	"strconv"
 )
-
-// Query 包括 GET, POST, PUT
-type Query interface {
-	// Query 获取指定参数的值
-	// 多个参数同名，只获取第一个
-	// 例如 /user?id=Yaha&id=Gama
-	// Query("id") 的结果为 "Yaha"
-	Query(key string) string
-
-	// QueryAll 获取所有参数的值
-	// 例如 /user?id=Yaha&id=Gama&age=18
-	// QueryAll() 的结果为 {"id": ["Yaha", "Gama"], "age": ["18"]}
-	QueryAll() map[string][]string
-
-	// QueryStrings 获取指定参数的值
-	// 例如 /user?id=Yaha&id=Gama
-	// QueryStrings("id") 的结果为 ["Yaha", "Gama"]
-	QueryStrings(key string) []string
-
-	// QueryEscape 获取指定参数的值，并对被转码的结果进行还原
-	QueryEscape(key string) string
-
-	// QueryBool 获取指定参数的值，并将结果转为 bool
-	QueryBool(key string) bool
-
-	// QueryInt32 获取指定参数的值，并将结果转为 int32
-	QueryInt32(key string) int32
-
-	// QueryInt64 获取指定参数的值，并将结果转为 int64
-	QueryInt64(key string) int64
-
-	// QueryFloat32 获取指定参数的值，并将结果转为 float32
-	QueryFloat32(key string) float32
-
-	// QueryFloat64 获取指定参数的值，并将结果转为 float64
-	QueryFloat64(key string) float64
-
-	// QueryDefault 获取指定参数的值，如果不存在，则返回默认值 def
-	QueryDefault(key, def string) string
-
-	// QueryBoolDefault 获取指定参数的值(结果转为 bool)，如果不存在，则返回默认值 def
-	QueryBoolDefault(key string, def bool) bool
-
-	// QueryInt32Default 获取指定参数的值(结果转为 int32)，如果不存在，则返回默认值 def
-	QueryInt32Default(key string, def int32) int32
-
-	// QueryInt64Default 获取指定参数的值(结果转为 int64)，如果不存在，则返回默认值 def
-	QueryInt64Default(key string, def int64) int64
-
-	// QueryFloat32Default 获取指定参数的值(结果转为 float32)，如果不存在，则返回默认值 def
-	QueryFloat32Default(key string, def float32) float32
-
-	// QueryFloat64Default 获取指定参数的值(结果转为 float64)，如果不存在，则返回默认值 def
-	QueryFloat64Default(key string, def float64) float64
-}
 
 // queryAll 获取所有的参数值，内部使用
 func (ctx *context) queryAll() (map[string][]string, bool) {

@@ -1,25 +1,27 @@
-package zeroapi
+package router
 
 import (
 	"strings"
+
+	zeroapi "github.com/zerogo-hub/zero-api"
 )
 
 // Route 路由，每一个 Route 表示一颗基数树，每种 HTTP Method 一个实例
 type Route interface {
 	// Insert 添加路由，路由不可重复
-	Insert(path string, handlers ...Handler)
+	Insert(path string, handlers ...zeroapi.Handler)
 
 	// Build 解析路由，包括动态参数，正则表达式，验证函数。路由优化
-	Build(router Router) bool
+	Build(router zeroapi.Router) bool
 
 	// Lookup 查找路由
-	Lookup(path string) ([]Handler, map[string]string)
+	Lookup(path string) ([]zeroapi.Handler, map[string]string)
 
 	// Child 查找节点信息
-	Child(path string) RouteNode
+	Child(path string) zeroapi.RouteNode
 
 	// Children 获取节点列表
-	Children() []RouteNode
+	Children() []zeroapi.RouteNode
 
 	// Reset 重置，清理所有数据
 	Reset()
@@ -28,7 +30,7 @@ type Route interface {
 // route 实现一颗基数树
 type route struct {
 	// root 基数树根节点
-	root RouteNode
+	root zeroapi.RouteNode
 }
 
 // NewRoute ..
@@ -37,23 +39,23 @@ func NewRoute() Route {
 }
 
 // Insert 添加路由，路由不可重复
-func (re *route) Insert(path string, handlers ...Handler) {
+func (re *route) Insert(path string, handlers ...zeroapi.Handler) {
 	paths := buildPath(path)
 	re.root.Put(path, paths, 0, handlers...)
 }
 
 // Build 解析路由，包括动态参数，正则表达式，验证函数
-func (re *route) Build(router Router) bool {
+func (re *route) Build(router zeroapi.Router) bool {
 	return re.root.Build(router)
 }
 
 // Lookup 查找路由
-func (re *route) Lookup(path string) ([]Handler, map[string]string) {
+func (re *route) Lookup(path string) ([]zeroapi.Handler, map[string]string) {
 	return re.root.Lookup(path, nil)
 }
 
 // Child 查找节点信息
-func (re *route) Child(path string) RouteNode {
+func (re *route) Child(path string) zeroapi.RouteNode {
 	for _, child := range re.root.Children() {
 		if child.Path() == path {
 			return child
@@ -68,7 +70,7 @@ func (re *route) Child(path string) RouteNode {
 }
 
 // Children 获取节点列表
-func (re *route) Children() []RouteNode {
+func (re *route) Children() []zeroapi.RouteNode {
 	return re.root.Children()
 }
 

@@ -1,18 +1,11 @@
-package zeroapi
+package context
 
 import (
 	"net/http"
 	"sync"
+
+	zeroapi "github.com/zerogo-hub/zero-api"
 )
-
-// Writer 实现 http.ResponseWriter
-type Writer interface {
-	http.ResponseWriter
-
-	Writer() http.ResponseWriter
-
-	SetWriter(w http.ResponseWriter)
-}
 
 type writer struct {
 	http.ResponseWriter
@@ -29,12 +22,12 @@ func (w *writer) SetWriter(sw http.ResponseWriter) {
 var writerPool *sync.Pool
 
 // acquireWriter 从池中获取 Writer
-func acquireWriter() Writer {
+func acquireWriter() zeroapi.Writer {
 	return writerPool.Get().(*writer)
 }
 
 // releaseWriter 将 writer 放入池中
-func releaseWriter(w Writer) {
+func releaseWriter(w zeroapi.Writer) {
 	writerPool.Put(w)
 }
 

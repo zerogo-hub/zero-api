@@ -1,16 +1,17 @@
-package zeroapi_test
+package router_test
 
 import (
 	"testing"
 
-	zeroapi "github.com/zerogo-hub/zero-api"
+	app "github.com/zerogo-hub/zero-api/app"
+	router "github.com/zerogo-hub/zero-api/router"
 )
 
 func TestGroup(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 
 	// 路由前缀自动添加 "/"
-	g := zeroapi.NewGroup(a, "blog")
+	g := router.NewGroup(a, "blog")
 
 	// 使用中间件
 	g.Use(emptyHandle)

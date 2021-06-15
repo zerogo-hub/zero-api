@@ -1,4 +1,4 @@
-package zeroapi
+package context
 
 import (
 	"bytes"
@@ -9,44 +9,13 @@ import (
 	"strings"
 	"sync"
 
+	zeroapi "github.com/zerogo-hub/zero-api"
 	"github.com/zerogo-hub/zero-helper/crypto"
 	"github.com/zerogo-hub/zero-helper/time"
 )
 
-// CookieOption cookie 选项
-type CookieOption func(cookie *http.Cookie) error
-
-// Cookie cookie 相关
-type Cookie interface {
-
-	// Cookie 获取 cookie 值
-	Cookie(key string, opts ...CookieOption) (string, error)
-
-	// SetCookie 设置 cookie，见 https://tools.ietf.org/html/rfc6265
-	// key: cookie 参数名称
-	// value: cookie 值
-	// maxAge: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.2
-	// 		 = 0: 表示不指定
-	// 		 < 0: 表示立即删除
-	// 		 > 0: cookie 生存时间，单位秒
-	// domain: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.3
-	// path: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.4
-	// secure: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.5
-	// httpOnly: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.6
-	SetCookie(key, value string, opts ...CookieOption)
-
-	// RemoveCookie 移除指定的 cookie
-	RemoveCookie(key string, opts ...CookieOption)
-
-	// SetHTTPCookie 设置原始的 cookie
-	SetHTTPCookie(cookie *http.Cookie)
-
-	// HTTPCookies 获取所有原始的 cookie
-	HTTPCookies() []*http.Cookie
-}
-
 // Cookie 获取 cookie 值
-func (ctx *context) Cookie(name string, opts ...CookieOption) (string, error) {
+func (ctx *context) Cookie(name string, opts ...zeroapi.CookieOption) (string, error) {
 	oname := name
 
 	if ctx.app.IsCookieEncode() {
@@ -92,7 +61,7 @@ func (ctx *context) Cookie(name string, opts ...CookieOption) (string, error) {
 // path: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.4
 // secure: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.5
 // httpOnly: 见 https://tools.ietf.org/html/rfc6265#section-4.1.2.6
-func (ctx *context) SetCookie(name, value string, opts ...CookieOption) {
+func (ctx *context) SetCookie(name, value string, opts ...zeroapi.CookieOption) {
 	cookie := &http.Cookie{Name: name, Value: url.QueryEscape(value)}
 
 	for _, opt := range opts {
@@ -114,7 +83,7 @@ func (ctx *context) SetCookie(name, value string, opts ...CookieOption) {
 }
 
 // RemoveCookie 移除指定的 cookie
-func (ctx *context) RemoveCookie(name string, opts ...CookieOption) {
+func (ctx *context) RemoveCookie(name string, opts ...zeroapi.CookieOption) {
 	ctx.SetCookie(name, "", WithCookieMaxAge(-1))
 }
 
@@ -137,7 +106,7 @@ func (ctx *context) HTTPCookies() []*http.Cookie {
 // 		 = 0: 表示不指定存活时间
 // 		 < 0: 表示立即删除
 // 		 > 0: cookie 生存时间，单位秒
-func WithCookieMaxAge(maxAge int) CookieOption {
+func WithCookieMaxAge(maxAge int) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		cookie.MaxAge = maxAge
 		return nil
@@ -145,7 +114,7 @@ func WithCookieMaxAge(maxAge int) CookieOption {
 }
 
 // WithCookiePath path: https://tools.ietf.org/html/rfc6265#section-4.1.2.4
-func WithCookiePath(path string) CookieOption {
+func WithCookiePath(path string) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		if path != "" {
 			cookie.Path = path
@@ -155,7 +124,7 @@ func WithCookiePath(path string) CookieOption {
 }
 
 // WithCookieDomain domain: https://tools.ietf.org/html/rfc6265#section-4.1.2.3
-func WithCookieDomain(domain string) CookieOption {
+func WithCookieDomain(domain string) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		if domain != "" {
 			cookie.Domain = domain
@@ -165,7 +134,7 @@ func WithCookieDomain(domain string) CookieOption {
 }
 
 // WithCookieSecure secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.5
-func WithCookieSecure(secure bool) CookieOption {
+func WithCookieSecure(secure bool) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		cookie.Secure = secure
 		return nil
@@ -173,7 +142,7 @@ func WithCookieSecure(secure bool) CookieOption {
 }
 
 // WithCookieHTTPOnly secure: https://tools.ietf.org/html/rfc6265#section-4.1.2.6
-func WithCookieHTTPOnly(httpOnly bool) CookieOption {
+func WithCookieHTTPOnly(httpOnly bool) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		cookie.HttpOnly = httpOnly
 		return nil
@@ -181,7 +150,7 @@ func WithCookieHTTPOnly(httpOnly bool) CookieOption {
 }
 
 // WithCookieSign 对 cookie 进行签名
-func WithCookieSign(signKey string) CookieOption {
+func WithCookieSign(signKey string) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		if cookie.Name == "" {
 			return errors.New("cookie name is empty")
@@ -212,7 +181,7 @@ func WithCookieSign(signKey string) CookieOption {
 }
 
 // WithCookieVerify 对有签名的 cookie 进行验证
-func WithCookieVerify(signKey string) CookieOption {
+func WithCookieVerify(signKey string) zeroapi.CookieOption {
 	return func(cookie *http.Cookie) error {
 		if cookie.Value == "" {
 			return errors.New("cookie value is empty")

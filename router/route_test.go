@@ -1,13 +1,14 @@
-package zeroapi_test
+package router_test
 
 import (
 	"testing"
 
-	zeroapi "github.com/zerogo-hub/zero-api"
+	app "github.com/zerogo-hub/zero-api/app"
+	router "github.com/zerogo-hub/zero-api/router"
 )
 
 func TestRouteLookupStatic(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 	route.Insert("/blog/name", emptyHandle)
 	route.Build(nil)
 
@@ -25,7 +26,7 @@ func TestRouteLookupStatic(t *testing.T) {
 }
 
 func TestRouteLookupNotFound(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 	route.Insert("/blog/name", emptyHandle)
 	route.Build(nil)
 
@@ -35,12 +36,12 @@ func TestRouteLookupNotFound(t *testing.T) {
 }
 
 func TestRouteLookupDynamic(t *testing.T) {
-	a := zeroapi.NewApp()
+	a := app.NewApp()
 	r := a.Router()
 
 	r.RegisterRouterValidator("isNum", isNum)
 
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 	route.Insert("/blog/:id/name", emptyHandle)
 	route.Build(nil)
 
@@ -89,7 +90,7 @@ func TestRouteLookupDynamic(t *testing.T) {
 }
 
 func TestRouteLookupDynamicWildcard(t *testing.T) {
-	route := zeroapi.NewRoute()
+	route := router.NewRoute()
 	route.Insert("/blog/:id/*/name", emptyHandle)
 	route.Build(nil)
 

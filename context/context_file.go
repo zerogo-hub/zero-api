@@ -1,4 +1,4 @@
-package zeroapi
+package context
 
 import (
 	"io"
@@ -7,23 +7,10 @@ import (
 	"os"
 	"path/filepath"
 
+	zeroapi "github.com/zerogo-hub/zero-api"
+
 	"github.com/zerogo-hub/zero-helper/file"
 )
-
-// File 文件相关
-type File interface {
-	// File 获取上传文件信息
-	File(key string) (multipart.File, *multipart.FileHeader, error)
-
-	// Files 获取上传文件信息，可能有多个文件
-	// cbs 在存盘前修改 multipart.FileHeader
-	Files(destDirectory string, cbs ...func(Context, *multipart.FileHeader)) (int64, error)
-
-	// DownloadFile 下载文件
-	// path 文件路径
-	// filename 文件名称
-	DownloadFile(path string, filename ...string)
-}
 
 // upload 从临时文件夹或者内存中写入到指定位置的文件夹中
 func upload(dest string, header *multipart.FileHeader) (int64, error) {
@@ -51,7 +38,7 @@ func (ctx *context) File(key string) (multipart.File, *multipart.FileHeader, err
 	return ctx.req.FormFile(key)
 }
 
-func (ctx *context) Files(destDirectory string, cbs ...func(Context, *multipart.FileHeader)) (int64, error) {
+func (ctx *context) Files(destDirectory string, cbs ...func(zeroapi.Context, *multipart.FileHeader)) (int64, error) {
 	if err := ctx.req.ParseMultipartForm(ctx.app.FileMaxMemory()); err != nil {
 		return 0, err
 	}

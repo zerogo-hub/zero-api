@@ -1,56 +1,8 @@
-package zeroapi
+package context
 
-import "strconv"
-
-// Post 包括 POST, PUT, PATCH
-type Post interface {
-	// Post 获取指定参数的值
-	// 多个参数同名，只获取第一个
-	// 例如 /user?id=Yaha&id=Gama
-	// Post("id") 的结果为 "Yaha"
-	Post(key string) string
-
-	// PostStrings 获取指定参数的值
-	// 例如 /user?id=Yaha&id=Gama
-	// PostStrings("id") 的结果为 ["Yaha", "Gama"]
-	PostStrings(key string) []string
-
-	// PostEscape 获取指定参数的值，并对被编码的结果进行解码
-	PostEscape(key string) string
-
-	// PostBool 获取指定参数的值，并将结果转为 bool
-	PostBool(key string) bool
-
-	// PostInt32 获取指定参数的值，并将结果转为 int32
-	PostInt32(key string) int32
-
-	// PostInt64 获取指定参数的值，并将结果转为 int64
-	PostInt64(key string) int64
-
-	// PostFloat32 获取指定参数的值，并将结果转为 float32
-	PostFloat32(key string) float32
-
-	// PostFloat64 获取指定参数的值，并将结果转为 float64
-	PostFloat64(key string) float64
-
-	// PostDefault 获取指定参数的值，如果不存在，则返回默认值 def
-	PostDefault(key, def string) string
-
-	// PostBoolDefault 获取指定参数的值(结果转为 bool)，如果不存在，则返回默认值 def
-	PostBoolDefault(key string, def bool) bool
-
-	// PostInt32Default 获取指定参数的值(结果转为 int32)，如果不存在，则返回默认值 def
-	PostInt32Default(key string, def int32) int32
-
-	// PostInt64Default 获取指定参数的值(结果转为 int64)，如果不存在，则返回默认值 def
-	PostInt64Default(key string, def int64) int64
-
-	// PostFloat32Default 获取指定参数的值(结果转为 float32)，如果不存在，则返回默认值 def
-	PostFloat32Default(key string, def float32) float32
-
-	// PostFloat64Default 获取指定参数的值(结果转为 float64)，如果不存在，则返回默认值 def
-	PostFloat64Default(key string, def float64) float64
-}
+import (
+	"strconv"
+)
 
 func (ctx *context) Post(key string) string {
 	// PostForm: 需要先调用 ParseForm()

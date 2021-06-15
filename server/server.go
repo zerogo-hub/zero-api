@@ -1,33 +1,18 @@
-package zeroapi
+package server
 
 import (
 	"net/http"
 	"os"
 
+	zeroapi "github.com/zerogo-hub/zero-api"
+
 	"github.com/zerogo-hub/zero-helper/file"
 	graceful "github.com/zerogo-hub/zero-helper/graceful/http"
 )
 
-// Server http 服务器
-type Server interface {
-	http.Handler
-
-	// Start 根据配置调用 ListenAndServe 或者 ListenAndServeTLS 启动 http 服务，接收连接请求
-	// addr: host:port，例如: ":8080"，"192.168.1.8:80"
-	Start(addr string) error
-
-	// HTTPServer 实际使用的 http 服务器
-	HTTPServer() graceful.Server
-
-	// SetTLS 指定 tls 证书，密钥路径
-	// certFile: 证书路径
-	// keyFile: 私钥路径
-	SetTLS(certFile, keyFile string) bool
-}
-
 type server struct {
 	// app 应用实例
-	app App
+	app zeroapi.App
 
 	// httpServer 实际使用  graceful.Server 替代 http.Server
 	httpServer graceful.Server
@@ -40,7 +25,7 @@ type server struct {
 }
 
 // NewServer 新建一个 http 服务器
-func NewServer(app App) Server {
+func NewServer(app zeroapi.App) zeroapi.Server {
 	s := &server{app: app}
 	s.httpServer = graceful.NewServer(s, app.Logger())
 

@@ -1,4 +1,4 @@
-package zeroapi
+package context
 
 import (
 	"encoding/json"
@@ -14,58 +14,6 @@ import (
 	"github.com/zerogo-hub/zero-helper/bytes"
 	"google.golang.org/protobuf/proto"
 )
-
-// Write 响应相关
-type Write interface {
-	// Bytes 将数据写入响应
-	Bytes(bytes []byte) (int, error)
-
-	// Text 将数据写入响应中
-	Text(value string) (int, error)
-
-	// Textf 将数据写入响应中
-	Textf(format string, a ...interface{})
-
-	// Map map 转 text
-	Map(obj interface{}) (int, error)
-
-	// JSON 将数据转为 JSON 格式写入响应
-	JSON(obj interface{}) (int, error)
-
-	// XML 将数据转为 XML 格式写入响应
-	XML(obj interface{}) (int, error)
-
-	// HTML 发送 html 响应
-	HTML(html string) (int, error)
-
-	// HTMLf 发送 html 响应
-	HTMLf(format string, a ...interface{}) (int, error)
-
-	// Protobuf 将数据装为 google protobuf 格式，写入响应
-	Protobuf(obj interface{}) (int, error)
-
-	// Size 响应的数据大小
-	Size() int64
-
-	// Redirect 重定向
-	// httpCode: HTTP Code， 需要在 3xx 范围内, 比如 301, 302, 303 ... 308
-	// url: 重定向后的地址
-	Redirect(httpCode int, url string) error
-
-	// Flush 将数据推向客户端
-	Flush()
-
-	// Push HTTP/2 服务器推送
-	Push(value string, opts *http.PushOptions) error
-
-	// AutoContentType 根据给定的文件类型，自动设置 Content-Type
-	// .json -> app/json
-	// fileExt: 文件后缀名，例如 .json
-	AutoContentType(fileExt string)
-
-	// Message 传递 {"code": xx, "message": xxx}
-	Message(code int, message ...string) (int, error)
-}
 
 func (ctx *context) Bytes(bytes []byte) (int, error) {
 	var size int

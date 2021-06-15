@@ -1,34 +1,12 @@
-package zeroapi
+package router
 
-// Router 路由管理器
-type Router interface {
-
-	// Prefix 设置前缀，设置前就已添加的路由不会有该前缀
-	// 例如: prefix = "/blog"，则 "/user" -> "/blog/user"
-	Prefix(prefix string)
-
-	// Register 注册路由处理函数，以及中间件
-	// method: HTTP Method，见 core/const.go Methodxxxx
-	// path: 路径，以 "/" 开头，不可以为空
-	// handles: 处理函数和路由级别中间件，匹配成功后会调用该函数
-	Register(method, path string, handlers ...Handler) bool
-
-	// Build 解析路由，包括动态参数，正则表达式，验证函数
-	Build() bool
-
-	// Lookup 查找路由
-	Lookup(method, path string) ([]Handler, map[string]string)
-
-	// RegisterRouterValidator 注册路由验证函数
-	RegisterRouterValidator(name string, validator RouterValidator)
-
-	// Validator 获取路由验证函数
-	Validator(name string) RouterValidator
-}
+import (
+	zeroapi "github.com/zerogo-hub/zero-api"
+)
 
 type router struct {
 	// app 应用实例
-	app App
+	app zeroapi.App
 
 	prefix string
 
@@ -36,15 +14,15 @@ type router struct {
 	routes map[string]Route
 
 	// validators 存储验证函数
-	validators map[string]RouterValidator
+	validators map[string]zeroapi.RouterValidator
 }
 
-// NewRouter 创建一个 Router 实例
-func NewRouter(app App) Router {
+// NewRouter 创建一个 zeroapi.Router 实例
+func NewRouter(app zeroapi.App) zeroapi.Router {
 	return &router{
 		app:        app,
-		routes:     make(map[string]Route, len(AllMethods())),
-		validators: make(map[string]RouterValidator),
+		routes:     make(map[string]Route, len(zeroapi.AllMethods())),
+		validators: make(map[string]zeroapi.RouterValidator),
 	}
 }
 
@@ -66,7 +44,7 @@ func (r *router) Prefix(prefix string) {
 // method: HTTP Method，见 core/const.go Methodxxxx
 // path: 路径，以 "/" 开头，不可以为空
 // handles: 处理函数和路由级别中间件，匹配成功后会调用该函数
-func (r *router) Register(method, path string, handlers ...Handler) bool {
+func (r *router) Register(method, path string, handlers ...zeroapi.Handler) bool {
 	if len(path) == 0 {
 		return false
 	} else if len(handlers) == 0 {
@@ -100,7 +78,7 @@ func (r *router) Build() bool {
 }
 
 // Lookup 查找路由
-func (r *router) Lookup(method, path string) ([]Handler, map[string]string) {
+func (r *router) Lookup(method, path string) ([]zeroapi.Handler, map[string]string) {
 	if re := r.routes[method]; re != nil {
 		return re.Lookup(path)
 	}
@@ -109,7 +87,7 @@ func (r *router) Lookup(method, path string) ([]Handler, map[string]string) {
 }
 
 // RegisterRouterValidator 注册路由验证函数
-func (r *router) RegisterRouterValidator(name string, validator RouterValidator) {
+func (r *router) RegisterRouterValidator(name string, validator zeroapi.RouterValidator) {
 	if _, exist := r.validators[name]; exist {
 		return
 	}
@@ -118,7 +96,7 @@ func (r *router) RegisterRouterValidator(name string, validator RouterValidator)
 }
 
 // Validator 获取路由验证函数
-func (r *router) Validator(name string) RouterValidator {
+func (r *router) Validator(name string) zeroapi.RouterValidator {
 	if f, exist := r.validators[name]; exist {
 		return f
 	}

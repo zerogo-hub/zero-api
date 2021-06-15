@@ -66,4 +66,7 @@ type (
 
 	// CookieDecodeHandler cookie 编码与解码函数
 	CookieDecodeHandler func(s string) (string, error)
+
+	// CookieOption cookie 选项
+ 	CookieOption func(cookie *http.Cookie) error
 )
