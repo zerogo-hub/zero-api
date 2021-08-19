@@ -11,7 +11,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/zerogo-hub/zero-helper/bytes"
+	zerobytes "github.com/zerogo-hub/zero-helper/bytes"
+
 	"google.golang.org/protobuf/proto"
 )
 
@@ -34,7 +35,7 @@ func (ctx *context) Text(value string) (int, error) {
 	var size int
 	var err error
 
-	size, err = ctx.res.Writer().Write(bytes.StringToBytes(value))
+	size, err = ctx.res.Writer().Write(zerobytes.StringToBytes(value))
 
 	if err != nil {
 		return 0, err
@@ -84,7 +85,7 @@ func (ctx *context) XML(obj interface{}) (int, error) {
 func (ctx *context) HTML(html string) (int, error) {
 	ctx.SetHeader("Content-Type", "text/html;charset=utf-8")
 
-	return ctx.Bytes(bytes.StringToBytes(template.HTMLEscapeString(html)))
+	return ctx.Bytes(zerobytes.StringToBytes(template.HTMLEscapeString(html)))
 }
 
 func (ctx *context) HTMLf(format string, a ...interface{}) (int, error) {

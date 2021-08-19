@@ -9,7 +9,7 @@ import (
 
 	zeroapi "github.com/zerogo-hub/zero-api"
 
-	"github.com/zerogo-hub/zero-helper/file"
+	zerofile "github.com/zerogo-hub/zero-helper/file"
 )
 
 // upload 从临时文件夹或者内存中写入到指定位置的文件夹中
@@ -69,7 +69,7 @@ func (ctx *context) Files(destDirectory string, cbs ...func(zeroapi.Context, *mu
 }
 
 func (ctx *context) DownloadFile(path string, filename ...string) {
-	if !file.IsExist(path) {
+	if !zerofile.IsExist(path) {
 		http.ServeFile(ctx.res.Writer(), ctx.req, path)
 		return
 	}
@@ -78,7 +78,7 @@ func (ctx *context) DownloadFile(path string, filename ...string) {
 	if len(filename) > 0 && filename[0] != "" {
 		fname = filename[0]
 	} else {
-		fname = file.NameRand(path, 8)
+		fname = zerofile.NameRand(path, 8)
 	}
 
 	ctx.AddHeader("Content-Disposition", "attachment; filename="+fname)

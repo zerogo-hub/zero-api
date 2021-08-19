@@ -9,11 +9,11 @@ import (
 	"sync"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
-	"github.com/zerogo-hub/zero-api/context"
-	"github.com/zerogo-hub/zero-api/router"
-	"github.com/zerogo-hub/zero-api/server"
+	zeroctx "github.com/zerogo-hub/zero-api/context"
+	zerorouter "github.com/zerogo-hub/zero-api/router"
+	zeroserver "github.com/zerogo-hub/zero-api/server"
 
-	"github.com/zerogo-hub/zero-helper/logger"
+	zerologger "github.com/zerogo-hub/zero-helper/logger"
 
 	zamcors "github.com/zerogo-hub/zero-api-middleware/cors"
 	zamlogger "github.com/zerogo-hub/zero-api-middleware/logger"
@@ -61,10 +61,10 @@ func NewApp(opts ...Option) zeroapi.App {
 		config:  defaultConfig(),
 	}
 
-	a.router = router.NewRouter(a)
-	a.server = server.NewServer(a)
+	a.router = zerorouter.NewRouter(a)
+	a.server = zeroserver.NewServer(a)
 	a.ctxPool.New = func() interface{} {
-		return context.NewContext(a)
+		return zeroctx.NewContext(a)
 	}
 
 	for _, opt := range opts {
@@ -100,7 +100,7 @@ func (a *app) Version() string {
 }
 
 // Logger 获取日志实例
-func (a *app) Logger() logger.Logger {
+func (a *app) Logger() zerologger.Logger {
 	return a.config.logger
 }
 
@@ -226,7 +226,7 @@ func (a *app) Options(path string, handlers ...zeroapi.Handler) zeroapi.App {
 
 // Group 创建组路由实例
 func (a *app) Group(path string) zeroapi.Group {
-	return router.NewGroup(a, path)
+	return zerorouter.NewGroup(a, path)
 }
 
 // Static 添加静态资源服务

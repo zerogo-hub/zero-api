@@ -4,8 +4,8 @@ import (
 	"mime/multipart"
 	"net/http"
 
-	graceful "github.com/zerogo-hub/zero-helper/graceful/http"
-	"github.com/zerogo-hub/zero-helper/logger"
+	zerograceful "github.com/zerogo-hub/zero-helper/graceful/http"
+	zerologger "github.com/zerogo-hub/zero-helper/logger"
 )
 
 // App 应用
@@ -27,7 +27,7 @@ type App interface {
 	Version() string
 
 	// Logger 获取日志实例
-	Logger() logger.Logger
+	Logger() zerologger.Logger
 
 	// FileMaxMemory 文件系统使用的最大内存
 	FileMaxMemory() int64
@@ -497,7 +497,7 @@ type Server interface {
 	Start(addr string) error
 
 	// HTTPServer 实际使用的 http 服务器
-	HTTPServer() graceful.Server
+	HTTPServer() zerograceful.Server
 
 	// SetTLS 指定 tls 证书，密钥路径
 	// certFile: 证书路径

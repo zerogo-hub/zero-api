@@ -3,12 +3,12 @@ package router_test
 import (
 	"testing"
 
-	app "github.com/zerogo-hub/zero-api/app"
-	router "github.com/zerogo-hub/zero-api/router"
+	zeroapp "github.com/zerogo-hub/zero-api/app"
+	zerorouter "github.com/zerogo-hub/zero-api/router"
 )
 
 func TestRouteLookupStatic(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 	route.Insert("/blog/name", emptyHandle)
 	route.Build(nil)
 
@@ -26,7 +26,7 @@ func TestRouteLookupStatic(t *testing.T) {
 }
 
 func TestRouteLookupNotFound(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 	route.Insert("/blog/name", emptyHandle)
 	route.Build(nil)
 
@@ -36,12 +36,12 @@ func TestRouteLookupNotFound(t *testing.T) {
 }
 
 func TestRouteLookupDynamic(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 
 	r.RegisterRouterValidator("isNum", isNum)
 
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 	route.Insert("/blog/:id/name", emptyHandle)
 	route.Build(nil)
 
@@ -90,7 +90,7 @@ func TestRouteLookupDynamic(t *testing.T) {
 }
 
 func TestRouteLookupDynamicWildcard(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 	route.Insert("/blog/:id/*/name", emptyHandle)
 	route.Build(nil)
 

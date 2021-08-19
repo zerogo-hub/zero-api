@@ -10,8 +10,8 @@ import (
 	"sync"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
-	"github.com/zerogo-hub/zero-helper/crypto"
-	"github.com/zerogo-hub/zero-helper/time"
+	zerocrypto "github.com/zerogo-hub/zero-helper/crypto"
+	zerotime "github.com/zerogo-hub/zero-helper/time"
 )
 
 // Cookie 获取 cookie 值
@@ -160,7 +160,7 @@ func WithCookieSign(signKey string) zeroapi.CookieOption {
 			return errors.New("cookie name is empty")
 		}
 
-		timestamp := strconv.Itoa(int(time.Now()))
+		timestamp := strconv.Itoa(int(zerotime.Now()))
 
 		buf := cookieBuffer()
 		defer cookeReleaseBuffer(buf)
@@ -169,7 +169,7 @@ func WithCookieSign(signKey string) zeroapi.CookieOption {
 		buf.WriteString(cookie.Value)
 		buf.WriteString(timestamp)
 
-		sign := crypto.HmacMd5(buf.String(), signKey)
+		sign := zerocrypto.HmacMd5(buf.String(), signKey)
 
 		buf.Reset()
 		buf.WriteString(cookie.Value)
@@ -208,7 +208,7 @@ func WithCookieVerify(signKey string) zeroapi.CookieOption {
 		buf.WriteString(cookie.Name)
 		buf.WriteString(value)
 		buf.WriteString(timestamp)
-		calcSign := crypto.HmacMd5(buf.String(), signKey)
+		calcSign := zerocrypto.HmacMd5(buf.String(), signKey)
 
 		if calcSign != sign {
 			// cookie 值被篡改

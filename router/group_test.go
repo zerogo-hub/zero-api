@@ -3,15 +3,15 @@ package router_test
 import (
 	"testing"
 
-	app "github.com/zerogo-hub/zero-api/app"
-	router "github.com/zerogo-hub/zero-api/router"
+	zeroapp "github.com/zerogo-hub/zero-api/app"
+	zerorouter "github.com/zerogo-hub/zero-api/router"
 )
 
 func TestGroup(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 
 	// 路由前缀自动添加 "/"
-	g := router.NewGroup(a, "blog")
+	g := zerorouter.NewGroup(a, "blog")
 
 	// 使用中间件
 	g.Use(emptyHandle)

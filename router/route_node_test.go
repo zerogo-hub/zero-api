@@ -5,14 +5,14 @@ import (
 	"testing"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
-	app "github.com/zerogo-hub/zero-api/app"
-	router "github.com/zerogo-hub/zero-api/router"
+	zeroapp "github.com/zerogo-hub/zero-api/app"
+	zerorouter "github.com/zerogo-hub/zero-api/router"
 )
 
 func emptyHandle(zeroapi.Context) {}
 
 func TestRouteNodeStatic(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog", emptyHandle)
 	route.Insert("/blog/a/b/c/d", emptyHandle)
@@ -39,7 +39,7 @@ func TestRouteNodeStatic(t *testing.T) {
 }
 
 func TestRouteNodeRoot(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 	route.Insert("/", emptyHandle)
 	route.Build(nil)
 
@@ -50,7 +50,7 @@ func TestRouteNodeRoot(t *testing.T) {
 }
 
 func TestRouteNodeDynamic(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog/:id/borrow", emptyHandle)
 	route.Insert("/blog/:id/name", emptyHandle)
@@ -82,7 +82,7 @@ func TestRouteNodeDynamic(t *testing.T) {
 }
 
 func TestRouteNodeMultiDynamic(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog/:id/borrow", emptyHandle)
 	route.Insert("/blog/:id/:account/:app/name", emptyHandle)
@@ -137,7 +137,7 @@ func TestRouteNodeMultiDynamic(t *testing.T) {
 }
 
 func TestRouteNodeDynamicNum(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog-1/:id/borrow/:account", emptyHandle)
 	route.Insert("/blog-2/:id/:account/:app/name", emptyHandle)
@@ -160,7 +160,7 @@ func TestRouteNodeDynamicNum(t *testing.T) {
 }
 
 func TestRouteNodeStaticDynamic(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog/user/add", emptyHandle)
 	route.Insert("/blog/user/:id/del", emptyHandle)
@@ -194,7 +194,7 @@ func TestRouteNodeStaticDynamic(t *testing.T) {
 }
 
 func TestRouteNodeWildcard(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	route.Insert("/blog/notfound/*/abc", emptyHandle)
 
@@ -216,7 +216,7 @@ func TestRouteNodeWildcard(t *testing.T) {
 }
 
 func TestRouteDynamicParseRegexp(t *testing.T) {
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	// 缺失右括号
 	route.Insert("/blog/list/:id(^\\d+$", emptyHandle)
@@ -249,12 +249,12 @@ func less4(s string) bool {
 }
 
 func TestRouteDynamicParseValidator(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 
 	r.RegisterRouterValidator("isNum", isNum)
 
-	route := router.NewRoute()
+	route := zerorouter.NewRoute()
 
 	// 没有验证函数
 	route.Insert("/blog/list/:id", emptyHandle)

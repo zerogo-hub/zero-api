@@ -3,7 +3,7 @@ package app
 import (
 	zeroapi "github.com/zerogo-hub/zero-api"
 
-	"github.com/zerogo-hub/zero-helper/logger"
+	zerologger "github.com/zerogo-hub/zero-helper/logger"
 )
 
 var (
@@ -20,7 +20,7 @@ type config struct {
 	fileMaxMemory int64
 
 	// logger 日志管理器
-	logger logger.Logger
+	logger zerologger.Logger
 
 	// cookieEncode 对 cookie 键值编码函数
 	cookieEncode zeroapi.CookieEncodeHandler
@@ -33,7 +33,7 @@ func defaultConfig() *config {
 	return &config{
 		version:       zeroapi.VERSION,
 		fileMaxMemory: defaultFileMaxMemory,
-		logger:        logger.NewSampleLogger(),
+		logger:        zerologger.NewSampleLogger(),
 	}
 }
 
@@ -55,7 +55,7 @@ func WithFileMaxMemory(fileMaxMemory int64) Option {
 }
 
 // WithLogger 设置日志
-func WithLogger(logger logger.Logger) Option {
+func WithLogger(logger zerologger.Logger) Option {
 	return func(config *config) {
 		config.logger = logger
 	}

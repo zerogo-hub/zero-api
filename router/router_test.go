@@ -4,11 +4,11 @@ import (
 	"testing"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
-	app "github.com/zerogo-hub/zero-api/app"
+	zeroapp "github.com/zerogo-hub/zero-api/app"
 )
 
 func TestRouterRegister(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 
 	// 错误的路由前缀
@@ -34,7 +34,7 @@ func TestRouterRegister(t *testing.T) {
 }
 
 func TestRouterBuildFailed(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 
 	r.Register(zeroapi.MethodGet, "/list/:id(\\d+", emptyHandle)
@@ -45,7 +45,7 @@ func TestRouterBuildFailed(t *testing.T) {
 }
 
 func TestRouterBuildSuccess(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 	r.RegisterRouterValidator("isNum", isNum)
 
@@ -60,7 +60,7 @@ func TestRouterBuildSuccess(t *testing.T) {
 }
 
 func TestRouterLookup(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 	r.RegisterRouterValidator("less4", less4)
 
@@ -92,7 +92,7 @@ func TestRouterLookup(t *testing.T) {
 }
 
 func TestRouterLookup2(t *testing.T) {
-	a := app.NewApp()
+	a := zeroapp.NewApp()
 	r := a.Router()
 
 	g := a.Group("/account")

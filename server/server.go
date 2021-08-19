@@ -8,7 +8,7 @@ import (
 	zeroctx "github.com/zerogo-hub/zero-api/context"
 
 	"github.com/zerogo-hub/zero-helper/file"
-	graceful "github.com/zerogo-hub/zero-helper/graceful/http"
+	zerograceful "github.com/zerogo-hub/zero-helper/graceful/http"
 )
 
 type server struct {
@@ -16,7 +16,7 @@ type server struct {
 	app zeroapi.App
 
 	// httpServer 实际使用  graceful.Server 替代 http.Server
-	httpServer graceful.Server
+	httpServer zerograceful.Server
 
 	// tlsCertFile tls 证书路径
 	tlsCertFile string
@@ -28,7 +28,7 @@ type server struct {
 // NewServer 新建一个 http 服务器
 func NewServer(app zeroapi.App) zeroapi.Server {
 	s := &server{app: app}
-	s.httpServer = graceful.NewServer(s, app.Logger())
+	s.httpServer = zerograceful.NewServer(s, app.Logger())
 
 	return s
 }
@@ -108,7 +108,7 @@ func (s *server) Start(addr string) error {
 }
 
 // HTTPServer 实际使用的 http 服务器
-func (s *server) HTTPServer() graceful.Server {
+func (s *server) HTTPServer() zerograceful.Server {
 	return s.httpServer
 }
 
