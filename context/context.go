@@ -44,9 +44,6 @@ type context struct {
 	afters []zeroapi.HookHandler
 	// ends 存储钩子函数，无论路由是否执行成功，无论是否发生异常，都会在最终处执行 ends，后进先出
 	ends []zeroapi.HookHandler
-
-	// handlers 存储路由处理函数和中间件
-	handlers []zeroapi.Handler
 }
 
 // NewContext 创建一个 Context 实例
