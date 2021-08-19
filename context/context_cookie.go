@@ -73,6 +73,10 @@ func (ctx *context) SetCookie(name, value string, opts ...zeroapi.CookieOption) 
 		cookie.MaxAge = 3600
 	}
 
+	if len(cookie.Path) == 0 {
+		cookie.Path = "/"
+	}
+
 	if ctx.app.IsCookieEncode() {
 		handler := ctx.app.CookieEncodeHandler()
 		cookie.Name = handler(cookie.Name)
