@@ -3,5 +3,5 @@ package zeroapi
 
 const (
 	// VERSION 框架版本号
-	VERSION = "0.5.2"
+	VERSION = "0.6.3"
 )
