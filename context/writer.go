@@ -21,13 +21,13 @@ func (w *writer) SetWriter(sw http.ResponseWriter) {
 
 var writerPool *sync.Pool
 
-// acquireWriter 从池中获取 Writer
-func acquireWriter() zeroapi.Writer {
+// AcquireWriter 从池中获取 Writer
+func AcquireWriter() zeroapi.Writer {
 	return writerPool.Get().(*writer)
 }
 
-// releaseWriter 将 writer 放入池中
-func releaseWriter(w zeroapi.Writer) {
+// ReleaseWriter 将 writer 放入池中
+func ReleaseWriter(w zeroapi.Writer) {
 	writerPool.Put(w)
 }
 

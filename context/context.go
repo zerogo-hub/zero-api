@@ -59,7 +59,8 @@ func (ctx *context) App() zeroapi.App {
 }
 
 func (ctx *context) Reset(res http.ResponseWriter, req *http.Request) {
-	ctx.res = acquireWriter()
+	ctx.res = AcquireWriter()
+	// 存储原生的 res
 	ctx.res.SetWriter(res)
 	ctx.req = req
 	ctx.status = ContextStatusNormal

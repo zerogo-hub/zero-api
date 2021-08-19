@@ -5,6 +5,7 @@ import (
 	"os"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
+	zeroctx "github.com/zerogo-hub/zero-api/context"
 
 	"github.com/zerogo-hub/zero-helper/file"
 	graceful "github.com/zerogo-hub/zero-helper/graceful/http"
@@ -42,6 +43,8 @@ func (s *server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		}
 
 		go ctx.RunEnd()
+
+		zeroctx.ReleaseWriter(ctx.Response())
 	}()
 
 	ctx.Reset(res, req)
