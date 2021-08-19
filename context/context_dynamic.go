@@ -25,7 +25,7 @@ func (ctx *context) Dynamic(key string) string {
 
 func (ctx *context) SetDynamic(key string, value string) error {
 	if len(key) == 0 {
-		return errors.New("Parameter key cannot be empty")
+		return errors.New("parameter key cannot be empty")
 	}
 
 	// 兼容判断
