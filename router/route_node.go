@@ -312,7 +312,7 @@ func (rn *routeNode) lookupByStatic(path string, dynamic map[string]string) ([]z
 
 	// rn.path = /users，path = /user
 	// 当前节点 rn 不匹配 path
-	if len(rn.path) > len(path) {
+	if len(rn.path) >= len(path) {
 		return nil, nil
 	}
 
