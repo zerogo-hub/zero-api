@@ -188,7 +188,7 @@ func (a *app) Post(path string, handlers ...zeroapi.Handler) zeroapi.App {
 // path: 路径，以 "/" 开头，不可以为空
 // handlers: 路由级别中间件和处理函数
 func (a *app) Put(path string, handlers ...zeroapi.Handler) zeroapi.App {
-	a.router.Register(zeroapi.MethodPost, path, handlers...)
+	a.router.Register(zeroapi.MethodPut, path, handlers...)
 	return a
 }
 

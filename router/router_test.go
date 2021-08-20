@@ -99,6 +99,7 @@ func TestRouterLookup2(t *testing.T) {
 	g.Post("/v1/signup", emptyHandle)
 	g.Post("/v1/signin", emptyHandle)
 	g.Post("/v1/signout", emptyHandle)
+	g.Put("/v1/password", emptyHandle)
 
 	if !r.Build() {
 		t.Fatal("build failed")
@@ -106,5 +107,9 @@ func TestRouterLookup2(t *testing.T) {
 
 	if handlers, _ := r.Lookup(zeroapi.MethodPost, "/account/v1/signin"); handlers == nil {
 		t.Fatal("lookup /account/v1/signin failed")
+	}
+
+	if handlers, _ := r.Lookup(zeroapi.MethodPut, "/account/v1/password"); handlers == nil {
+		t.Fatal("lookup /account/v1/password failed")
 	}
 }
