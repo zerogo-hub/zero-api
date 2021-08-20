@@ -390,7 +390,7 @@ type ContextWrite interface {
 	Text(value string) (int, error)
 
 	// Textf 将数据写入响应中
-	Textf(format string, a ...interface{})
+	Textf(format string, a ...interface{}) error
 
 	// Map map 转 text
 	Map(obj interface{}) (int, error)

@@ -65,7 +65,9 @@ func (ctx *context) SetCookie(name, value string, opts ...zeroapi.CookieOption) 
 	cookie := &http.Cookie{Name: name, Value: url.QueryEscape(value)}
 
 	for _, opt := range opts {
-		opt(cookie)
+		if err := opt(cookie); err != nil {
+			ctx.App().Logger().Errorf("cookie opt failed, err: %s", err.Error())
+		}
 	}
 
 	// 默认存在 1 小时

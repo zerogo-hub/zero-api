@@ -47,8 +47,9 @@ func (ctx *context) Text(value string) (int, error) {
 	return size, nil
 }
 
-func (ctx *context) Textf(format string, a ...interface{}) {
-	ctx.Text(fmt.Sprintf(format, a...))
+func (ctx *context) Textf(format string, a ...interface{}) error {
+	_, err := ctx.Text(fmt.Sprintf(format, a...))
+	return err
 }
 
 func (ctx *context) Map(obj interface{}) (int, error) {
@@ -126,7 +127,9 @@ func (ctx *context) Flush() {
 
 func (ctx *context) Push(value string, opts *http.PushOptions) error {
 	if push, ok := ctx.res.Writer().(http.Pusher); ok {
-		push.Push(value, opts)
+		if err := push.Push(value, opts); err != nil {
+			return err
+		}
 	}
 
 	return http.ErrNotSupported

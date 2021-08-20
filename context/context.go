@@ -159,7 +159,9 @@ func (ctx *context) UserAgent() string {
 
 func (ctx *context) NotFound() {
 	ctx.SetHTTPCode(http.StatusNotFound)
-	ctx.Message(http.StatusNotFound, "PAGE NOT FOUND")
+	if _, err := ctx.Message(http.StatusNotFound, "PAGE NOT FOUND"); err != nil {
+		ctx.App().Logger().Errorf("set message failed, err: %s", err.Error())
+	}
 }
 
 func (ctx *context) IsStopped() bool {
