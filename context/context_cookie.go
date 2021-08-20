@@ -90,7 +90,9 @@ func (ctx *context) SetCookie(name, value string, opts ...zeroapi.CookieOption) 
 
 // RemoveCookie 移除指定的 cookie
 func (ctx *context) RemoveCookie(name string, opts ...zeroapi.CookieOption) {
-	ctx.SetCookie(name, "", WithCookieMaxAge(-1))
+	opts = append(opts, WithCookieMaxAge(-1))
+
+	ctx.SetCookie(name, "", opts...)
 }
 
 // SetHTTPCookie 设置原始的 cookie
