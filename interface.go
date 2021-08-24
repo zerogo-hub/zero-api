@@ -223,11 +223,29 @@ type ContextQuery interface {
 	// QueryBool 获取指定参数的值，并将结果转为 bool
 	QueryBool(key string) bool
 
+	// QueryInt8 获取指定参数的值，并将结果转为 int8
+	QueryInt8(key string) int8
+
+	// QueryUint8 获取指定参数的值，并将结果转为 uint8
+	QueryUint8(key string) uint8
+
+	// QueryInt16 获取指定参数的值，并将结果转为 int16
+	QueryInt16(key string) int16
+
+	// QueryUint16 获取指定参数的值，并将结果转为 uint16
+	QueryUint16(key string) uint16
+
 	// QueryInt32 获取指定参数的值，并将结果转为 int32
 	QueryInt32(key string) int32
 
+	// QueryUint32 获取指定参数的值，并将结果转为 uint32
+	QueryUint32(key string) uint32
+
 	// QueryInt64 获取指定参数的值，并将结果转为 int64
 	QueryInt64(key string) int64
+
+	// QueryUint64 获取指定参数的值，并将结果转为 uint64
+	QueryUint64(key string) uint64
 
 	// QueryFloat32 获取指定参数的值，并将结果转为 float32
 	QueryFloat32(key string) float32
@@ -241,11 +259,29 @@ type ContextQuery interface {
 	// QueryBoolDefault 获取指定参数的值(结果转为 bool)，如果不存在，则返回默认值 def
 	QueryBoolDefault(key string, def bool) bool
 
+	// QueryInt8Default 获取指定参数的值(结果转为 int8)，如果不存在，则返回默认值 def
+	QueryInt8Default(key string, def int8) int8
+
+	// QueryUint8Default 获取指定参数的值(结果转为 uint8)，如果不存在，则返回默认值 def
+	QueryUint8Default(key string, def uint8) uint8
+
+	// QueryInt16Default 获取指定参数的值(结果转为 int16)，如果不存在，则返回默认值 def
+	QueryInt16Default(key string, def int16) int16
+
+	// QueryUint16Default 获取指定参数的值(结果转为 uint16)，如果不存在，则返回默认值 def
+	QueryUint16Default(key string, def uint16) uint16
+
 	// QueryInt32Default 获取指定参数的值(结果转为 int32)，如果不存在，则返回默认值 def
 	QueryInt32Default(key string, def int32) int32
 
+	// QueryUint32Default 获取指定参数的值(结果转为 uint32)，如果不存在，则返回默认值 def
+	QueryUint32Default(key string, def uint32) uint32
+
 	// QueryInt64Default 获取指定参数的值(结果转为 int64)，如果不存在，则返回默认值 def
 	QueryInt64Default(key string, def int64) int64
+
+	// QueryUint64Default 获取指定参数的值(结果转为 uint64)，如果不存在，则返回默认值 def
+	QueryUint64Default(key string, def uint64) uint64
 
 	// QueryFloat32Default 获取指定参数的值(结果转为 float32)，如果不存在，则返回默认值 def
 	QueryFloat32Default(key string, def float32) float32
@@ -268,11 +304,29 @@ type ContextGet interface {
 	// GetBool 获取指定参数的值，并将结果转为 bool
 	GetBool(key string) bool
 
+	// GetInt8 获取指定参数的值，并将结果转为 int8
+	GetInt8(key string) int8
+
+	// GetUint8 获取指定参数的值，并将结果转为 uint8
+	GetUint8(key string) uint8
+
+	// GetInt16 获取指定参数的值，并将结果转为 int16
+	GetInt16(key string) int16
+
+	// GetUint16 获取指定参数的值，并将结果转为 uint16
+	GetUint16(key string) uint16
+
 	// GetInt32 获取指定参数的值，并将结果转为 int32
 	GetInt32(key string) int32
 
+	// GetUint32 获取指定参数的值，并将结果转为 uint32
+	GetUint32(key string) uint32
+
 	// GetInt64 获取指定参数的值，并将结果转为 int64
 	GetInt64(key string) int64
+
+	// GetUint64 获取指定参数的值，并将结果转为 uint64
+	GetUint64(key string) uint64
 
 	// GetFloat32 获取指定参数的值，并将结果转为 float32
 	GetFloat32(key string) float32
@@ -318,11 +372,29 @@ type ContextPost interface {
 	// PostBool 获取指定参数的值，并将结果转为 bool
 	PostBool(key string) bool
 
+	// PostInt8 获取指定参数的值，并将结果转为 int8
+	PostInt8(key string) int8
+
+	// PostUint8 获取指定参数的值，并将结果转为 uint8
+	PostUint8(key string) uint8
+
+	// PostInt16 获取指定参数的值，并将结果转为 int16
+	PostInt16(key string) int16
+
+	// PostUint16 获取指定参数的值，并将结果转为 uint16
+	PostUint16(key string) uint16
+
 	// PostInt32 获取指定参数的值，并将结果转为 int32
 	PostInt32(key string) int32
 
+	// PostUint32 获取指定参数的值，并将结果转为 uint32
+	PostUint32(key string) uint32
+
 	// PostInt64 获取指定参数的值，并将结果转为 int64
 	PostInt64(key string) int64
+
+	// PostUint64 获取指定参数的值，并将结果转为 uint64
+	PostUint64(key string) uint64
 
 	// PostFloat32 获取指定参数的值，并将结果转为 float32
 	PostFloat32(key string) float32

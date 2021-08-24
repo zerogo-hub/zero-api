@@ -17,14 +17,44 @@ func (ctx *context) GetBool(key string) bool {
 	return v
 }
 
+func (ctx *context) GetInt8(key string) int8 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
+	return int8(v)
+}
+
+func (ctx *context) GetUint8(key string) uint8 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
+	return uint8(v)
+}
+
+func (ctx *context) GetInt16(key string) int16 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
+	return int16(v)
+}
+
+func (ctx *context) GetUint16(key string) uint16 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
+	return uint16(v)
+}
+
 func (ctx *context) GetInt32(key string) int32 {
 	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
 	return int32(v)
 }
 
+func (ctx *context) GetUint32(key string) uint32 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 32)
+	return uint32(v)
+}
+
 func (ctx *context) GetInt64(key string) int64 {
 	v, _ := strconv.ParseInt(ctx.Get(key), 10, 64)
 	return v
+}
+
+func (ctx *context) GetUint64(key string) uint64 {
+	v, _ := strconv.ParseInt(ctx.Get(key), 10, 64)
+	return uint64(v)
 }
 
 func (ctx *context) GetFloat32(key string) float32 {

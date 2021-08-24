@@ -39,14 +39,44 @@ func (ctx *context) PostBool(key string) bool {
 	return v
 }
 
+func (ctx *context) PostInt8(key string) int8 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
+	return int8(v)
+}
+
+func (ctx *context) PostUint8(key string) uint8 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
+	return uint8(v)
+}
+
+func (ctx *context) PostInt16(key string) int16 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
+	return int16(v)
+}
+
+func (ctx *context) PostUint16(key string) uint16 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
+	return uint16(v)
+}
+
 func (ctx *context) PostInt32(key string) int32 {
 	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
 	return int32(v)
 }
 
+func (ctx *context) PostUint32(key string) uint32 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 32)
+	return uint32(v)
+}
+
 func (ctx *context) PostInt64(key string) int64 {
 	v, _ := strconv.ParseInt(ctx.Post(key), 10, 64)
 	return v
+}
+
+func (ctx *context) PostUint64(key string) uint64 {
+	v, _ := strconv.ParseInt(ctx.Post(key), 10, 64)
+	return uint64(v)
 }
 
 func (ctx *context) PostFloat32(key string) float32 {
