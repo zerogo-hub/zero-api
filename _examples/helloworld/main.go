@@ -19,8 +19,15 @@ func main() {
 
 	a.Get("/", helloworldHandle)
 
+	server := a.Server()
+
 	// 监听信号，比如优雅关闭
-	a.Server().HTTPServer().ListenSignal()
+	server.HTTPServer().ListenSignal()
+
+	// 在退出前清理
+	server.RegisterShutdownHandler(func() {
+		a.Logger().Info("done before exit")
+	})
 
 	if err := a.Run("127.0.0.1:8877"); err != nil {
 		a.Logger().Error(err.Error())

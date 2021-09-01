@@ -92,16 +92,16 @@ func (s *server) Start(addr string) error {
 
 	// tls
 	if s.tlsCertFile != "" && s.tlsKeyFile != "" {
-		if logger.IsDebugAble() {
-			logger.Debugf("TLS on, %s/%s", s.tlsCertFile, s.tlsKeyFile)
-			logger.Debugf("Listen on: https://%s", addr)
+		if logger.IsInfoAble() {
+			logger.Infof("TLS on, %s/%s", s.tlsCertFile, s.tlsKeyFile)
+			logger.Infof("Listen on: https://%s", addr)
 		}
 
 		return s.httpServer.ListenAndServeTLS(addr, s.tlsCertFile, s.tlsKeyFile)
 	}
 
-	if logger.IsDebugAble() {
-		logger.Debugf("Listen on: http://%s", addr)
+	if logger.IsInfoAble() {
+		logger.Infof("Listen on: http://%s", addr)
 	}
 
 	return s.httpServer.ListenAndServe(addr)
@@ -130,4 +130,20 @@ func (s *server) SetTLS(certFile, keyFile string) bool {
 	s.tlsKeyFile = keyFile
 
 	return true
+}
+
+// SetShutdownTimeout 设置优雅退出超时时间
+// 服务器会每隔500毫秒检查一次连接是否都断开处理完毕
+// 如果超过超时时间，就不再检查，直接退出
+//
+// ms: 单位：毫秒，当 <= 0 时无效，直接退出
+func (s *server) SetShutdownTimeout(ms int) {
+	s.httpServer.SetShutdownTimeout(ms)
+}
+
+// RegisterShutdownHandler 注册关闭函数
+// 按照注册的顺序调用这些函数
+// 所有已经添加的服务器都会响应这个函数
+func (s *server) RegisterShutdownHandler(f func()) {
+	s.httpServer.RegisterShutdownHandler(f)
 }

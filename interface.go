@@ -575,6 +575,18 @@ type Server interface {
 	// certFile: 证书路径
 	// keyFile: 私钥路径
 	SetTLS(certFile, keyFile string) bool
+
+	// SetShutdownTimeout 设置优雅退出超时时间
+	// 服务器会每隔500毫秒检查一次连接是否都断开处理完毕
+	// 如果超过超时时间，就不再检查，直接退出
+	//
+	// ms: 单位：毫秒，当 <= 0 时无效，直接退出
+	SetShutdownTimeout(ms int)
+
+	// RegisterShutdownHandler 注册关闭函数
+	// 按照注册的顺序调用这些函数
+	// 所有已经添加的服务器都会响应这个函数
+	RegisterShutdownHandler(f func())
 }
 
 // Router 路由管理器
