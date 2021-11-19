@@ -108,7 +108,6 @@ type RouterRegister interface {
 type Context interface {
 	ContextBase
 	ContextHeader
-	ContextQuery
 	ContextGet
 	ContextPost
 	ContextDynamic
@@ -197,97 +196,6 @@ type ContextHeader interface {
 
 	// DelHeader 移除响应中的 header
 	DelHeader(key string)
-}
-
-// ContextQuery 包括 GET, POST, PUT
-type ContextQuery interface {
-	// Query 获取指定参数的值
-	// 多个参数同名，只获取第一个
-	// 例如 /user?id=Yaha&id=Gama
-	// Query("id") 的结果为 "Yaha"
-	Query(key string) string
-
-	// QueryAll 获取所有参数的值
-	// 例如 /user?id=Yaha&id=Gama&age=18
-	// QueryAll() 的结果为 {"id": ["Yaha", "Gama"], "age": ["18"]}
-	QueryAll() map[string][]string
-
-	// QueryStrings 获取指定参数的值
-	// 例如 /user?id=Yaha&id=Gama
-	// QueryStrings("id") 的结果为 ["Yaha", "Gama"]
-	QueryStrings(key string) []string
-
-	// QueryEscape 获取指定参数的值，并对被转码的结果进行还原
-	QueryEscape(key string) string
-
-	// QueryBool 获取指定参数的值，并将结果转为 bool
-	QueryBool(key string) bool
-
-	// QueryInt8 获取指定参数的值，并将结果转为 int8
-	QueryInt8(key string) int8
-
-	// QueryUint8 获取指定参数的值，并将结果转为 uint8
-	QueryUint8(key string) uint8
-
-	// QueryInt16 获取指定参数的值，并将结果转为 int16
-	QueryInt16(key string) int16
-
-	// QueryUint16 获取指定参数的值，并将结果转为 uint16
-	QueryUint16(key string) uint16
-
-	// QueryInt32 获取指定参数的值，并将结果转为 int32
-	QueryInt32(key string) int32
-
-	// QueryUint32 获取指定参数的值，并将结果转为 uint32
-	QueryUint32(key string) uint32
-
-	// QueryInt64 获取指定参数的值，并将结果转为 int64
-	QueryInt64(key string) int64
-
-	// QueryUint64 获取指定参数的值，并将结果转为 uint64
-	QueryUint64(key string) uint64
-
-	// QueryFloat32 获取指定参数的值，并将结果转为 float32
-	QueryFloat32(key string) float32
-
-	// QueryFloat64 获取指定参数的值，并将结果转为 float64
-	QueryFloat64(key string) float64
-
-	// QueryDefault 获取指定参数的值，如果不存在，则返回默认值 def
-	QueryDefault(key, def string) string
-
-	// QueryBoolDefault 获取指定参数的值(结果转为 bool)，如果不存在，则返回默认值 def
-	QueryBoolDefault(key string, def bool) bool
-
-	// QueryInt8Default 获取指定参数的值(结果转为 int8)，如果不存在，则返回默认值 def
-	QueryInt8Default(key string, def int8) int8
-
-	// QueryUint8Default 获取指定参数的值(结果转为 uint8)，如果不存在，则返回默认值 def
-	QueryUint8Default(key string, def uint8) uint8
-
-	// QueryInt16Default 获取指定参数的值(结果转为 int16)，如果不存在，则返回默认值 def
-	QueryInt16Default(key string, def int16) int16
-
-	// QueryUint16Default 获取指定参数的值(结果转为 uint16)，如果不存在，则返回默认值 def
-	QueryUint16Default(key string, def uint16) uint16
-
-	// QueryInt32Default 获取指定参数的值(结果转为 int32)，如果不存在，则返回默认值 def
-	QueryInt32Default(key string, def int32) int32
-
-	// QueryUint32Default 获取指定参数的值(结果转为 uint32)，如果不存在，则返回默认值 def
-	QueryUint32Default(key string, def uint32) uint32
-
-	// QueryInt64Default 获取指定参数的值(结果转为 int64)，如果不存在，则返回默认值 def
-	QueryInt64Default(key string, def int64) int64
-
-	// QueryUint64Default 获取指定参数的值(结果转为 uint64)，如果不存在，则返回默认值 def
-	QueryUint64Default(key string, def uint64) uint64
-
-	// QueryFloat32Default 获取指定参数的值(结果转为 float32)，如果不存在，则返回默认值 def
-	QueryFloat32Default(key string, def float32) float32
-
-	// QueryFloat64Default 获取指定参数的值(结果转为 float64)，如果不存在，则返回默认值 def
-	QueryFloat64Default(key string, def float64) float64
 }
 
 // ContextGet 只包括 GET
