@@ -1,7 +1,6 @@
 package context
 
 import (
-	"net/url"
 	"strconv"
 )
 
@@ -49,21 +48,6 @@ func (ctx *context) QueryStrings(key string) []string {
 	}
 
 	return nil
-}
-
-// Unescape 解码
-// 解码以下编码的结果:
-// js: escape, encodeURI, encodeURIComponent
-// go: QueryEscape
-func unescape(value string) string {
-	if value == "" {
-		return ""
-	}
-	result, err := url.QueryUnescape(value)
-	if err != nil {
-		return value
-	}
-	return result
 }
 
 func (ctx *context) QueryEscape(key string) string {

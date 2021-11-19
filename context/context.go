@@ -3,6 +3,7 @@ package context
 import (
 	"net"
 	"net/http"
+	"net/url"
 	"strings"
 
 	zeroapi "github.com/zerogo-hub/zero-api"
@@ -188,4 +189,19 @@ func (ctx *context) SetValue(key string, value interface{}) {
 	}
 
 	ctx.values[key] = value
+}
+
+// Unescape 解码
+// 解码以下编码的结果:
+// js: escape, encodeURI, encodeURIComponent
+// go: QueryEscape
+func unescape(value string) string {
+	if value == "" {
+		return ""
+	}
+	result, err := url.QueryUnescape(value)
+	if err != nil {
+		return value
+	}
+	return result
 }
