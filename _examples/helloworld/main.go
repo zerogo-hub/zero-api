@@ -7,7 +7,7 @@ import (
 	app "github.com/zerogo-hub/zero-api/app"
 )
 
-func helloworldHandle(ctx zeroapi.Context) {
+func helloWorldHandle(ctx zeroapi.Context) {
 	pid := os.Getpid()
 	if err := ctx.Textf("`ctrl+c` to close, `kill %d` to shutdown, `kill -USR2 %d` to restart", pid, pid); err != nil {
 		ctx.App().Logger().Error(err.Error())
@@ -17,7 +17,7 @@ func helloworldHandle(ctx zeroapi.Context) {
 func main() {
 	a := app.Default()
 
-	a.Get("/", helloworldHandle)
+	a.Get("/", helloWorldHandle)
 
 	server := a.Server()
 
