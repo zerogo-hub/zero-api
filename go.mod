@@ -3,7 +3,7 @@ module github.com/zerogo-hub/zero-api
 go 1.17
 
 require (
-	github.com/zerogo-hub/zero-api-middleware v0.5.4
+	github.com/zerogo-hub/zero-api-middleware v0.17.6
 	github.com/zerogo-hub/zero-helper v0.19.6
 	google.golang.org/protobuf v1.27.1
 )
