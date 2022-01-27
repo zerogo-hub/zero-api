@@ -47,6 +47,10 @@ func (s *server) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		zeroctx.ReleaseWriter(ctx.Response())
 	}()
 
+	if s.app.MaxMemory() > 0 {
+		req.Body = http.MaxBytesReader(res, req.Body, s.app.MaxMemory())
+	}
+
 	ctx.Reset(res, req)
 
 	// 执行应用级别中间件

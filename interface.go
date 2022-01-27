@@ -29,8 +29,8 @@ type App interface {
 	// Logger 获取日志实例
 	Logger() zerologger.Logger
 
-	// FileMaxMemory 文件系统使用的最大内存
-	FileMaxMemory() int64
+	// MaxMemory 使用的最大内存
+	MaxMemory() int64
 
 	// IsCookieEncode cookie 是否需要进行编码
 	IsCookieEncode() bool

@@ -7,8 +7,9 @@ import (
 )
 
 var (
-	// defaultFileMaxMemory 用于限制使用内存大小 multipart/form-data，比如文件上传
-	defaultFileMaxMemory = int64(32 * 1024 * 1024) // 32M
+	// defaultMaxMemory 用于限制使用内存大小 multipart/form-data，比如文件上传
+	// 也会被 http.MaxBytesReader 调用
+	defaultMaxMemory = int64(32 * 1024 * 1024) // 32M
 )
 
 // config app 配置
@@ -16,8 +17,8 @@ type config struct {
 	// version 框架版本号
 	version string
 
-	// fileMaxMemory 文件系统使用的最大内存
-	fileMaxMemory int64
+	// maxMemory 最大内存
+	maxMemory int64
 
 	// logger 日志管理器
 	logger zerologger.Logger
@@ -31,9 +32,9 @@ type config struct {
 
 func defaultConfig() *config {
 	return &config{
-		version:       zeroapi.VERSION,
-		fileMaxMemory: defaultFileMaxMemory,
-		logger:        zerologger.NewSampleLogger(),
+		version:   zeroapi.VERSION,
+		maxMemory: defaultMaxMemory,
+		logger:    zerologger.NewSampleLogger(),
 	}
 }
 
@@ -47,10 +48,10 @@ func WithVersion(version string) Option {
 	}
 }
 
-// WithFileMaxMemory 设置文件系统使用的最大内存
-func WithFileMaxMemory(fileMaxMemory int64) Option {
+// WithMaxMemory 设置使用的最大内存
+func WithMaxMemory(maxMemory int64) Option {
 	return func(config *config) {
-		config.fileMaxMemory = fileMaxMemory
+		config.maxMemory = maxMemory
 	}
 }
 

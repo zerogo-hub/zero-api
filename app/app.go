@@ -104,9 +104,9 @@ func (a *app) Logger() zerologger.Logger {
 	return a.config.logger
 }
 
-// FileMaxMemory 文件系统使用的最大内存
-func (a *app) FileMaxMemory() int64 {
-	return a.config.fileMaxMemory
+// MaxMemory 文件系统使用的最大内存
+func (a *app) MaxMemory() int64 {
+	return a.config.maxMemory
 }
 
 // IsCookieEncode cookie 是否需要进行编码

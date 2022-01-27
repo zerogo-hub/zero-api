@@ -31,7 +31,7 @@ func upload(dest string, header *multipart.FileHeader) (int64, error) {
 }
 
 func (ctx *context) File(key string) (multipart.File, *multipart.FileHeader, error) {
-	if err := ctx.req.ParseMultipartForm(ctx.app.FileMaxMemory()); err != nil {
+	if err := ctx.req.ParseMultipartForm(ctx.app.MaxMemory()); err != nil {
 		return nil, nil, err
 	}
 
@@ -39,7 +39,7 @@ func (ctx *context) File(key string) (multipart.File, *multipart.FileHeader, err
 }
 
 func (ctx *context) Files(destDirectory string, cbs ...func(zeroapi.Context, *multipart.FileHeader)) (int64, error) {
-	if err := ctx.req.ParseMultipartForm(ctx.app.FileMaxMemory()); err != nil {
+	if err := ctx.req.ParseMultipartForm(ctx.app.MaxMemory()); err != nil {
 		return 0, err
 	}
 
