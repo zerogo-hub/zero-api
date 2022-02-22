@@ -113,3 +113,23 @@ func TestRouterLookup2(t *testing.T) {
 		t.Fatal("lookup /account/v1/password failed")
 	}
 }
+
+func TestRouterLookup3(t *testing.T) {
+	a := zeroapp.NewApp()
+	r := a.Router()
+
+	a.Get("/app", emptyHandle)
+	a.Get("/app/category", emptyHandle)
+	a.Get("/app/category/v1", emptyHandle)
+	if !r.Build() {
+		t.Fatal("build failed")
+	}
+
+	// 查找不存在的路由
+	if handlers, _ := r.Lookup(zeroapi.MethodGet, "/app/recharge/v1"); handlers != nil {
+		t.Fatal("lookup /app/recharge/v1 failed")
+	}
+	if handlers, _ := r.Lookup(zeroapi.MethodGet, "/app/category2/v1"); handlers != nil {
+		t.Fatal("lookup /app/recharge/v1 failed")
+	}
+}

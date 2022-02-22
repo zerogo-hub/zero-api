@@ -316,6 +316,12 @@ func (rn *routeNode) lookupByStatic(path string, dynamic map[string]string) ([]z
 		return nil, nil
 	}
 
+	// rn.path = /abc, path = /xyz/v1
+	parentPath := path[0:len(rn.path)]
+	if parentPath != rn.path {
+		return nil, nil
+	}
+
 	// rn.path = /user，path = /user/add
 	// 从子节点中匹配，childPath = /add
 	childPath := path[len(rn.path):]
