@@ -8,6 +8,10 @@ func (ctx *context) Get(key string) string {
 	return ctx.req.URL.Query().Get(key)
 }
 
+func (ctx *context) Gets(key string) []string {
+	return ctx.req.URL.Query()[key]
+}
+
 func (ctx *context) GetEscape(key string) string {
 	return unescape(ctx.Get(key))
 }

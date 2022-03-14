@@ -298,6 +298,9 @@ type ContextGet interface {
 	// Get("id") 的结果为 "Yaha"
 	Get(key string) string
 
+	// Gets 获取指定参数的所有值
+	Gets(key string) []string
+
 	// GetEscape 获取指定参数的值，并对被编码的结果进行解码
 	GetEscape(key string) string
 
