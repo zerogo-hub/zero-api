@@ -8,6 +8,7 @@ type router struct {
 	// app 应用实例
 	app zeroapi.App
 
+	// prefix 路由前缀
 	prefix string
 
 	// routes 按照 Method 存储路由
@@ -49,6 +50,10 @@ func (r *router) Register(method, path string, handlers ...zeroapi.Handler) bool
 		return false
 	} else if len(handlers) == 0 {
 		return false
+	}
+
+	if path[0] != '/' {
+		path = "/" + path
 	}
 
 	if r.prefix != "" {

@@ -545,6 +545,7 @@ type ContextHook interface {
 
 	// AppendEnd 添加处理函数，这些函数 在处理都完成之后执行，无论中间是否有中断和异常，都会执行
 	// 先入后出顺序执行，越先加入的函数越后执行
+	// 执行结果不影响返回值
 	AppendEnd(hook HookHandler)
 
 	// RunAfter 执行通过 AppendAfter 加入的处理函数

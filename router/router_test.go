@@ -72,22 +72,22 @@ func TestRouterLookup(t *testing.T) {
 
 	// 正确的找到
 	if handlers, dynamic := r.Lookup(zeroapi.MethodGet, "/list/101"); handlers == nil || len(dynamic) == 0 || dynamic["id"] != "101" {
-		t.Fatal("lookup failed")
+		t.Fatal("lookup failed 1")
 	}
 
 	// 不匹配的路由，不能通过正则表达式
 	if handlers, dynamic := r.Lookup(zeroapi.MethodGet, "/list/abcd"); handlers != nil || len(dynamic) > 0 {
-		t.Fatal("lookup failed")
+		t.Fatal("lookup failed 2")
 	}
 
 	// 不匹配的路由，不能通过验证函数检查
 	if handlers, dynamic := r.Lookup(zeroapi.MethodGet, "/list/1001"); handlers != nil || len(dynamic) > 0 {
-		t.Fatal("lookup failed")
+		t.Fatal("lookup failed 3")
 	}
 
 	// 不匹配的路由，错误的 Method
 	if handlers, dynamic := r.Lookup(zeroapi.MethodPost, "/list/10001"); handlers != nil || len(dynamic) > 0 {
-		t.Fatal("lookup failed")
+		t.Fatal("lookup failed 4")
 	}
 }
 

@@ -366,7 +366,7 @@ func (rn *routeNode) lookupByDynamic(path string, dynamic map[string]string) ([]
 		return rn.handlers, dynamic
 	}
 
-	// 向子节点查找
+	// 在子节点查找
 	childPath := path[pos+1:]
 
 	for _, child := range rn.children {

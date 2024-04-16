@@ -41,7 +41,7 @@
 
 - 格式: `:param|validator...|`，验证函数必须包裹在`|`内
 - 备注: 框架自带常用验证函数，也可以自行定义
-- 示例: `/blog/list/:id|isNum|less4|`
+- 示例: `/blog/list/:id|isNum|less4|`，id 为数字且小于 4 位数
   - `/blog/list/1001` 匹配，id="1001"
   - `/blog/list/1000001` 不匹配
   - `/blog/list/p101` 不匹配
