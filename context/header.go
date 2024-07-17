@@ -23,5 +23,17 @@ func (ctx *context) DelHeader(key string) {
 }
 
 func (ctx *context) ContentType() string {
-	return ctx.Header("Content-Type")
+	return TrimHeaderValue(ctx.Header("Content-Type"))
+}
+
+// TrimHeaderValue 返回第一个
+// 例如: Content-Type: text/html; charset=utf-8
+// 返回: text/html
+func TrimHeaderValue(v string) string {
+	for i, char := range v {
+		if char == ' ' || char == ';' {
+			return v[:i]
+		}
+	}
+	return v
 }
