@@ -21,3 +21,7 @@ func (ctx *context) DelHeader(key string) {
 		ctx.res.Writer().Header().Del(key)
 	}
 }
+
+func (ctx *context) ContentType() string {
+	return ctx.Header("Content-Type")
+}

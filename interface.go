@@ -180,6 +180,9 @@ type ContextBase interface {
 
 	// SetValue 设置对应的自定义值
 	SetValue(key string, value interface{})
+
+	// Body 针对 raw 格式，如 application/json, application/x-protobuf
+	Body(in interface{}) error
 }
 
 // ContextHeader ..
