@@ -1,11 +1,12 @@
 package context
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 
 	"google.golang.org/protobuf/proto"
+
+	zerojson "github.com/zerogo-hub/zero-helper/json"
 )
 
 func (ctx *context) Body(in interface{}) error {
@@ -16,7 +17,7 @@ func (ctx *context) Body(in interface{}) error {
 
 	switch ctx.ContentType() {
 	case "application/json":
-		return json.Unmarshal(b, in)
+		return zerojson.Unmarshal(b, in)
 	case "application/x-protobuf":
 		msg, ok := in.(proto.Message)
 		if !ok {

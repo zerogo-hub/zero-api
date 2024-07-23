@@ -1,7 +1,6 @@
 package context
 
 import (
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
@@ -11,9 +10,10 @@ import (
 	"strconv"
 	"strings"
 
-	zerobytes "github.com/zerogo-hub/zero-helper/bytes"
-
 	"google.golang.org/protobuf/proto"
+
+	zerobytes "github.com/zerogo-hub/zero-helper/bytes"
+	zerojson "github.com/zerogo-hub/zero-helper/json"
 )
 
 func (ctx *context) Bytes(bytes []byte) (int, error) {
@@ -53,7 +53,7 @@ func (ctx *context) Textf(format string, a ...interface{}) error {
 }
 
 func (ctx *context) Map(obj interface{}) (int, error) {
-	bytes, err := json.Marshal(obj)
+	bytes, err := zerojson.Marshal(obj)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +62,7 @@ func (ctx *context) Map(obj interface{}) (int, error) {
 }
 
 func (ctx *context) JSON(obj interface{}) (int, error) {
-	bytes, err := json.Marshal(obj)
+	bytes, err := zerojson.Marshal(obj)
 	if err != nil {
 		return 0, err
 	}
