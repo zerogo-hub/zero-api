@@ -11,7 +11,7 @@ import (
 )
 
 func (ctx *context) Body(in interface{}) error {
-	b, release, err := ctx.ReadBody(false)
+	b, release, err := ctx.ReadBody(true)
 	if err != nil {
 		return err
 	}
