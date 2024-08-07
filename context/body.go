@@ -1,6 +1,7 @@
 package context
 
 import (
+	"bytes"
 	"errors"
 	"io"
 
@@ -10,10 +11,11 @@ import (
 )
 
 func (ctx *context) Body(in interface{}) error {
-	b, err := ctx.readBody()
+	b, release, err := ctx.ReadBody(false)
 	if err != nil {
 		return err
 	}
+	release()
 
 	switch ctx.ContentType() {
 	case "application/json":
@@ -29,6 +31,20 @@ func (ctx *context) Body(in interface{}) error {
 	return nil
 }
 
-func (ctx *context) readBody() ([]byte, error) {
-	return io.ReadAll(ctx.req.Body)
+var emptyFunc = func() {}
+
+// ReadBody reads the request body
+func (ctx *context) ReadBody(isMultiTimes bool) ([]byte, func(), error) {
+	data, err := io.ReadAll(ctx.req.Body)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	if !isMultiTimes {
+		return data, emptyFunc, nil
+	}
+
+	return data, func() {
+		ctx.req.Body = io.NopCloser(bytes.NewBuffer(data))
+	}, nil
 }

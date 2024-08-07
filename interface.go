@@ -183,6 +183,10 @@ type ContextBase interface {
 
 	// Body 针对 raw 格式，如 application/json, application/x-protobuf
 	Body(in interface{}) error
+
+	// ReadBody 获取请求体中的内容
+	// isMultiTimes 是否可多次重复读取
+	ReadBody(isMultiTimes bool) ([]byte, func(), error)
 }
 
 // ContextHeader ..
